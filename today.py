@@ -30,9 +30,13 @@ def get_daily_message():
 def main():
     parser = argparse.ArgumentParser(description="Generate a daily message")
     parser.add_argument("-m", "--message", action="store_true", help="Show message of the day")
+    parser.add_argument("-c", "--count", type=int, default=1, help="Number of messages to show")
     args = parser.parse_args()
     
-    if args.message or not args.message:
+    if args.message or args.count > 1:
+        for _ in range(args.count):
+            print(get_daily_message())
+    else:
         print(get_daily_message())
 
 if __name__ == "__main__":
