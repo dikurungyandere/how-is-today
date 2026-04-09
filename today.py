@@ -2,6 +2,7 @@
 """Daily message generator - shows how today is going."""
 
 import random
+import json
 from datetime import datetime
 import argparse
 
@@ -31,13 +32,23 @@ def main():
     parser = argparse.ArgumentParser(description="Generate a daily message")
     parser.add_argument("-m", "--message", action="store_true", help="Show message of the day")
     parser.add_argument("-c", "--count", type=int, default=1, help="Number of messages to show")
+    parser.add_argument("-j", "--json", action="store_true", help="Output as JSON")
     args = parser.parse_args()
     
-    if args.message or args.count > 1:
+    message = get_daily_message()
+    
+    if args.json:
+        output = {
+            "date": datetime.now().strftime("%Y-%m-%d"),
+            "message": message,
+            "message_index": MESSAGES.index(message)
+        }
+        print(json.dumps(output))
+    elif args.message or args.count > 1:
         for _ in range(args.count):
             print(get_daily_message())
     else:
-        print(get_daily_message())
+        print(message)
 
 if __name__ == "__main__":
     main()
