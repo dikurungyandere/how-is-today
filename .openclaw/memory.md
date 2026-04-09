@@ -5,3 +5,6 @@
 - Push to main branch successful
 - Added -c/--count flag to show multiple messages
 
+## 2026-04-09
+- Added -j/--json flag for JSON output (date, message, index)
+
