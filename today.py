@@ -33,10 +33,14 @@ def main():
     parser = argparse.ArgumentParser(description="Generate a daily message")
     parser.add_argument("-m", "--message", action="store_true", help="Show message of the day")
     parser.add_argument("-c", "--count", type=int, default=1, help="Number of messages to show")
+    parser.add_argument("-r", "--random", action="store_true", help="Get a random message (not seeded by date)")
     parser.add_argument("-j", "--json", action="store_true", help="Output as JSON")
     args = parser.parse_args()
     
-    message = get_daily_message()
+    if args.random:
+        message = random.choice(MESSAGES)
+    else:
+        message = get_daily_message()
     
     if args.json:
         output = {
