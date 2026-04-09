@@ -21,10 +21,11 @@ MESSAGES = [
     "You are capable of amazing things! ⭐",
 ]
 
-def get_daily_message():
+def get_daily_message(seed=None):
     """Get a message based on today's date for consistency."""
     today = datetime.now()
-    seed = today.year * 10000 + today.month * 100 + today.day
+    if seed is None:
+        seed = today.year * 10000 + today.month * 100 + today.day
     random.seed(seed)
     return random.choice(MESSAGES)
 
@@ -45,8 +46,8 @@ def main():
         }
         print(json.dumps(output))
     elif args.message or args.count > 1:
-        for _ in range(args.count):
-            print(get_daily_message())
+        for i in range(args.count):
+            print(get_daily_message(seed=i))
     else:
         print(message)
 
