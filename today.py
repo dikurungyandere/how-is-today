@@ -29,13 +29,20 @@ def get_daily_message(seed=None):
     random.seed(seed)
     return random.choice(MESSAGES)
 
+VERSION = "1.0.0"
+
 def main():
     parser = argparse.ArgumentParser(description="Generate a daily message")
     parser.add_argument("-m", "--message", action="store_true", help="Show message of the day")
     parser.add_argument("-c", "--count", type=int, default=1, help="Number of messages to show")
     parser.add_argument("-r", "--random", action="store_true", help="Get a random message (not seeded by date)")
     parser.add_argument("-j", "--json", action="store_true", help="Output as JSON")
+    parser.add_argument("--version", action="store_true", help="Show version")
     args = parser.parse_args()
+    
+    if args.version:
+        print(f"how-is-today {VERSION}")
+        return
     
     messages = []
     if args.random:
