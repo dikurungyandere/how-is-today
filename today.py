@@ -37,23 +37,24 @@ def main():
     parser.add_argument("-j", "--json", action="store_true", help="Output as JSON")
     args = parser.parse_args()
     
+    messages = []
     if args.random:
-        message = random.choice(MESSAGES)
+        messages = [random.choice(MESSAGES) for _ in range(args.count)]
+    elif args.message or args.count > 1:
+        messages = [get_daily_message(seed=i) for i in range(args.count)]
     else:
-        message = get_daily_message()
+        messages = [get_daily_message()]
     
     if args.json:
         output = {
             "date": datetime.now().strftime("%Y-%m-%d"),
-            "message": message,
-            "message_index": MESSAGES.index(message)
+            "messages": messages,
+            "mode": "random" if args.random else "daily"
         }
         print(json.dumps(output))
-    elif args.message or args.count > 1:
-        for i in range(args.count):
-            print(get_daily_message(seed=i))
     else:
-        print(message)
+        for msg in messages:
+            print(msg)
 
 if __name__ == "__main__":
     main()
