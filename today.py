@@ -21,11 +21,12 @@ MESSAGES = [
     "You are capable of amazing things! ⭐",
 ]
 
-def get_daily_message(seed=None):
-    """Get a message based on today's date for consistency."""
-    today = datetime.now()
+def get_daily_message(seed=None, date=None):
+    """Get a message based on date for consistency."""
+    if date is None:
+        date = datetime.now()
     if seed is None:
-        seed = today.year * 10000 + today.month * 100 + today.day
+        seed = date.year * 10000 + date.month * 100 + date.day
     random.seed(seed)
     return random.choice(MESSAGES)
 
@@ -36,6 +37,7 @@ def main():
     parser.add_argument("-m", "--message", action="store_true", help="Show message of the day")
     parser.add_argument("-c", "--count", type=int, default=1, help="Number of messages to show")
     parser.add_argument("-r", "--random", action="store_true", help="Get a random message (not seeded by date)")
+    parser.add_argument("-d", "--date", type=str, help="Get message for date (YYYY-MM-DD)")
     parser.add_argument("-j", "--json", action="store_true", help="Output as JSON")
     parser.add_argument("--version", action="store_true", help="Show version")
     args = parser.parse_args()
@@ -43,18 +45,22 @@ def main():
     if args.version:
         print(f"how-is-today {VERSION}")
         return
-    
+
+    target_date = None
+    if args.date:
+        target_date = datetime.strptime(args.date, "%Y-%m-%d")
+
     messages = []
     if args.random:
         messages = [random.choice(MESSAGES) for _ in range(args.count)]
     elif args.message or args.count > 1:
-        messages = [get_daily_message(seed=i) for i in range(args.count)]
+        messages = [get_daily_message(seed=i, date=target_date) for i in range(args.count)]
     else:
-        messages = [get_daily_message()]
+        messages = [get_daily_message(date=target_date)]
     
     if args.json:
         output = {
-            "date": datetime.now().strftime("%Y-%m-%d"),
+            "date": (target_date or datetime.now()).strftime("%Y-%m-%d"),
             "messages": messages,
             "mode": "random" if args.random else "daily"
         }
