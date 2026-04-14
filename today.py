@@ -39,9 +39,15 @@ def main():
     parser.add_argument("-r", "--random", action="store_true", help="Get a random message (not seeded by date)")
     parser.add_argument("-d", "--date", type=str, help="Get message for date (YYYY-MM-DD)")
     parser.add_argument("-j", "--json", action="store_true", help="Output as JSON")
+    parser.add_argument("-l", "--list", action="store_true", help="List all available messages")
     parser.add_argument("--version", action="store_true", help="Show version")
     args = parser.parse_args()
     
+    if args.list:
+        for i, msg in enumerate(MESSAGES, 1):
+            print(f"{i}. {msg}")
+        return
+
     if args.version:
         print(f"how-is-today {VERSION}")
         return
