@@ -43,6 +43,7 @@ def main():
     parser.add_argument("-l", "--list", action="store_true", help="List all available messages")
     parser.add_argument("-o", "--output", type=str, help="Save message to file")
     parser.add_argument("--version", action="store_true", help="Show version")
+    parser.add_argument("-q", "--quiet", action="store_true", help="Suppress output (use with -o/--output)")
     args = parser.parse_args()
     
     if args.list:
@@ -53,6 +54,9 @@ def main():
     if args.version:
         print(f"how-is-today {VERSION}")
         return
+
+    # Handle quiet mode early
+    quiet = args.quiet if hasattr(args, 'quiet') else False
 
     target_date = None
     if args.date:
@@ -69,13 +73,15 @@ def main():
     if args.output:
         with open(args.output, "w") as f:
             f.write("\n".join(messages))
-        print(f"Saved to {args.output}", file=sys.stderr)
+        if not args.quiet:
+            print(f"Saved to {args.output}", file=sys.stderr)
     elif args.json:
         output = {
             "date": (target_date or datetime.now()).strftime("%Y-%m-%d"),
             "messages": messages,
             "mode": "random" if args.random else "daily"
         }
+        output["generated_at"] = datetime.now().isoformat()
         print(json.dumps(output))
     else:
         for msg in messages:
