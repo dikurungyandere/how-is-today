@@ -44,6 +44,7 @@ def main():
     parser.add_argument("-o", "--output", type=str, help="Save message to file")
     parser.add_argument("--version", action="store_true", help="Show version")
     parser.add_argument("-q", "--quiet", action="store_true", help="Suppress output (use with -o/--output)")
+    parser.add_argument("-s", "--seed", type=int, help="Custom seed for message (overrides date-based seeding)")
     args = parser.parse_args()
     
     if args.list:
@@ -62,13 +63,14 @@ def main():
     if args.date:
         target_date = datetime.strptime(args.date, "%Y-%m-%d")
 
+    custom_seed = args.seed if args.seed else None
     messages = []
     if args.random:
         messages = [random.choice(MESSAGES) for _ in range(args.count)]
     elif args.message or args.count > 1:
-        messages = [get_daily_message(seed=i, date=target_date) for i in range(args.count)]
+        messages = [get_daily_message(seed=(custom_seed + i) if custom_seed else i, date=target_date) for i in range(args.count)]
     else:
-        messages = [get_daily_message(date=target_date)]
+        messages = [get_daily_message(seed=custom_seed, date=target_date)]
     
     if args.output:
         with open(args.output, "w") as f:
