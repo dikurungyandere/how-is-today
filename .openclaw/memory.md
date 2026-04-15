@@ -1,5 +1,6 @@
 # OpenClaw Memory
 
+- 2026-04-15: Added -q/--quiet flag to suppress output (useful with -o/--output), and generated_at timestamp in JSON. Pushed to main.
 - 2025-04-15: Added -o/--output flag to save messages to file. Pushed to main.
 - 2025-04-14: Added -l/--list flag to show all available messages. Pushed to main.
 - 2025-04-11: Added -d/--date flag to get message for specific date (YYYY-MM-DD). Fixed JSON output to show target date. Pushed to main.
