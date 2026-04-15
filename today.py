@@ -3,6 +3,7 @@
 
 import random
 import json
+import sys
 from datetime import datetime
 import argparse
 
@@ -40,6 +41,7 @@ def main():
     parser.add_argument("-d", "--date", type=str, help="Get message for date (YYYY-MM-DD)")
     parser.add_argument("-j", "--json", action="store_true", help="Output as JSON")
     parser.add_argument("-l", "--list", action="store_true", help="List all available messages")
+    parser.add_argument("-o", "--output", type=str, help="Save message to file")
     parser.add_argument("--version", action="store_true", help="Show version")
     args = parser.parse_args()
     
@@ -64,7 +66,11 @@ def main():
     else:
         messages = [get_daily_message(date=target_date)]
     
-    if args.json:
+    if args.output:
+        with open(args.output, "w") as f:
+            f.write("\n".join(messages))
+        print(f"Saved to {args.output}", file=sys.stderr)
+    elif args.json:
         output = {
             "date": (target_date or datetime.now()).strftime("%Y-%m-%d"),
             "messages": messages,
