@@ -1,5 +1,6 @@
 # OpenClaw Memory
 
+- 2026-04-15: Added -s/--seed flag to specify custom seed via CLI. Same seed returns same message. Pushed to main.
 - 2026-04-15: Added -q/--quiet flag to suppress output (useful with -o/--output), and generated_at timestamp in JSON. Pushed to main.
 - 2025-04-15: Added -o/--output flag to save messages to file. Pushed to main.
 - 2025-04-14: Added -l/--list flag to show all available messages. Pushed to main.
