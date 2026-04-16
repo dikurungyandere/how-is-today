@@ -64,7 +64,11 @@ def main():
 
     target_date = None
     if args.date:
-        target_date = datetime.strptime(args.date, "%Y-%m-%d")
+        try:
+            target_date = datetime.strptime(args.date, "%Y-%m-%d")
+        except ValueError:
+            print(f"Error: Invalid date format '{args.date}'. Use YYYY-MM-DD", file=sys.stderr)
+            sys.exit(1)
 
     custom_seed = args.seed if args.seed else None
     messages = []
