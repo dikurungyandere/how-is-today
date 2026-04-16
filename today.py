@@ -20,6 +20,10 @@ MESSAGES = [
     "Today is what you make of it! 🎨",
     "Every moment is a fresh beginning! 🌅",
     "You are capable of amazing things! ⭐",
+    "Today is full of possibilities! 🌿",
+    "Make it count! 🎪",
+    "Progress, not perfection! 📈",
+    "You got this! 🤝",
 ]
 
 def get_daily_message(seed=None, date=None):
@@ -56,8 +60,7 @@ def main():
         print(f"how-is-today {VERSION}")
         return
 
-    # Handle quiet mode early
-    quiet = args.quiet if hasattr(args, 'quiet') else False
+    quiet = args.quiet
 
     target_date = None
     if args.date:
