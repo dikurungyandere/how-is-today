@@ -90,6 +90,8 @@ def main():
             "messages": messages,
             "mode": "random" if args.random else "daily"
         }
+        if custom_seed is not None:
+            output["seed"] = custom_seed
         output["generated_at"] = datetime.now().isoformat()
         print(json.dumps(output))
     else:
