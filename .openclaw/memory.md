@@ -1,5 +1,6 @@
 # OpenClaw Memory
 
+- 2026-04-16: Added friendly error message for invalid date format (-d option) instead of traceback. Pushed to main.
 - 2026-04-16: Added 4 new motivational messages to MESSAGES list. Simplified quiet variable handling (removed redundant hasattr). Pushed to main.
 - 2026-04-15: Added -s/--seed flag to specify custom seed via CLI. Same seed returns same message. Pushed to main.
 - 2026-04-15: Added -q/--quiet flag to suppress output (useful with -o/--output), and generated_at timestamp in JSON. Pushed to main.
