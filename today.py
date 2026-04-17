@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """Daily message generator - shows how today is going."""
 
+from datetime import datetime
+from typing import Optional, List
+
 import random
 import json
 import sys
-from datetime import datetime
 import argparse
 
-MESSAGES = [
+MESSAGES: List[str] = [
     "Today is a great day! 🌟",
     "Keep pushing, you're doing amazing! 💪",
     "A fresh start awaits you! ✨",
@@ -26,7 +28,7 @@ MESSAGES = [
     "You got this! 🤝",
 ]
 
-def get_daily_message(seed=None, date=None):
+def get_daily_message(seed: Optional[int] = None, date: Optional[datetime] = None) -> str:
     """Get a message based on date for consistency."""
     if date is None:
         date = datetime.now()
