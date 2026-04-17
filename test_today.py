@@ -2,7 +2,7 @@
 """Tests for today.py"""
 
 import pytest
-from today import get_daily_message, MESSAGES
+from today import get_daily_message, get_message_count, MESSAGES
 
 def test_get_daily_message_returns_string():
     """get_daily_message should return a string from MESSAGES."""
@@ -25,3 +25,7 @@ def test_messages_are_non_empty():
     """All messages should be non-empty strings."""
     for msg in MESSAGES:
         assert len(msg) > 0
+
+def test_get_message_count():
+    """get_message_count should return correct count."""
+    assert get_message_count() == len(MESSAGES)

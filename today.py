@@ -28,6 +28,10 @@ MESSAGES: List[str] = [
     "You got this! 🤝",
 ]
 
+def get_message_count() -> int:
+    """Return the total number of available messages."""
+    return len(MESSAGES)
+
 def get_daily_message(seed: Optional[int] = None, date: Optional[datetime] = None) -> str:
     """Get a message based on date for consistency."""
     if date is None:
@@ -55,7 +59,8 @@ def main():
     args = parser.parse_args()
     
     if args.list:
-        for i, msg in enumerate(MESSAGES, 1):
+        count = args.count if args.count > 1 else len(MESSAGES)
+        for i, msg in enumerate(MESSAGES[:count], 1):
             print(f"{i}. {msg}")
         return
 
