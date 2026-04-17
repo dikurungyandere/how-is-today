@@ -48,6 +48,7 @@ def main():
     parser.add_argument("-o", "--output", type=str, help="Save message to file")
     parser.add_argument("--version", action="store_true", help="Show version")
     parser.add_argument("-q", "--quiet", action="store_true", help="Suppress output (use with -o/--output)")
+    parser.add_argument("-v", "--verbose", action="store_true", help="Show extra info (seed, date)")
     parser.add_argument("-s", "--seed", type=int, help="Custom seed for message (overrides date-based seeding)")
     args = parser.parse_args()
     
@@ -97,6 +98,11 @@ def main():
     else:
         for msg in messages:
             print(msg)
+
+    if args.verbose and not args.json:
+        seed = custom_seed if custom_seed else (target_date.year * 10000 + target_date.month * 100 + target_date.day) if target_date else int(datetime.now().strftime("%Y%m%d"))
+        print(f"Seed: {seed}", file=sys.stderr)
+        print(f"Date: {(target_date or datetime.now()).strftime("%Y-%m-%d")}", file=sys.stderr)
 
 if __name__ == "__main__":
     main()
