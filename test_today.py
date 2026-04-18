@@ -29,3 +29,11 @@ def test_messages_are_non_empty():
 def test_get_message_count():
     """get_message_count should return correct count."""
     assert get_message_count() == len(MESSAGES)
+
+def test_cli_import():
+    """CLI module should be importable without errors."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("today", "today.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    assert hasattr(module, "main")
