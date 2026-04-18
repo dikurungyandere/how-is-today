@@ -96,7 +96,8 @@ def main():
         output = {
             "date": (target_date or datetime.now()).strftime("%Y-%m-%d"),
             "messages": messages,
-            "mode": "random" if args.random else "daily"
+            "mode": "random" if args.random else "daily",
+            "message_count": len(MESSAGES)
         }
         if custom_seed is not None:
             output["seed"] = custom_seed
