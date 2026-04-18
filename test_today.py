@@ -30,6 +30,12 @@ def test_get_message_count():
     """get_message_count should return correct count."""
     assert get_message_count() == len(MESSAGES)
 
+def test_get_random_message():
+    """get_random_message should return a message from MESSAGES."""
+    from today import get_random_message
+    result = get_random_message()
+    assert result in MESSAGES
+
 def test_cli_import():
     """CLI module should be importable without errors."""
     import importlib.util

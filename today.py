@@ -32,6 +32,10 @@ def get_message_count() -> int:
     """Return the total number of available messages."""
     return len(MESSAGES)
 
+def get_random_message() -> str:
+    """Return a random message (not seeded by date)."""
+    return random.choice(MESSAGES)
+
 def get_daily_message(seed: Optional[int] = None, date: Optional[datetime] = None) -> str:
     """Get a message based on date for consistency."""
     if date is None:
