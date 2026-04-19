@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
-"""Daily message generator - shows how today is going."""
+"""Daily message generator - shows how today is going.
+
+Examples:
+    python today.py --message    # Show today's message
+    python today.py --random    # Show random message
+    python today.py --list    # List all messages
+"""
+
+__all__ = ["get_daily_message", "get_random_message", "get_message_count",
+           "get_message_by_index", "MESSAGES", "VERSION"]
 
 from datetime import datetime
 from typing import Optional, List
