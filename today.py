@@ -75,6 +75,7 @@ def main():
     parser.add_argument("-q", "--quiet", action="store_true", help="Suppress output (use with -o/--output)")
     parser.add_argument("-v", "--verbose", action="store_true", help="Show extra info (seed, date)")
     parser.add_argument("-s", "--seed", type=int, help="Custom seed for message (overrides date-based seeding)")
+    parser.add_argument("-i", "--index", type=int, help="Get message by index (0-based)")
     args = parser.parse_args()
     
     if args.list:
@@ -85,6 +86,14 @@ def main():
 
     if args.version:
         print(f"how-is-today {VERSION}")
+        return
+
+    if args.index is not None:
+        msg = get_message_by_index(args.index)
+        if msg is None:
+            print(f"Error: Index {args.index} out of range (0-{len(MESSAGES)-1})", file=sys.stderr)
+            sys.exit(1)
+        print(msg)
         return
 
     quiet = args.quiet
