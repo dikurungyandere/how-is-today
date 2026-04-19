@@ -32,6 +32,12 @@ def get_message_count() -> int:
     """Return the total number of available messages."""
     return len(MESSAGES)
 
+def get_message_by_index(index: int) -> Optional[str]:
+    """Return message at given index, or None if out of range."""
+    if 0 <= index < len(MESSAGES):
+        return MESSAGES[index]
+    return None
+
 def get_random_message() -> str:
     """Return a random message (not seeded by date)."""
     return random.choice(MESSAGES)

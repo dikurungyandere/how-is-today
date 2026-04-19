@@ -30,6 +30,14 @@ def test_get_message_count():
     """get_message_count should return correct count."""
     assert get_message_count() == len(MESSAGES)
 
+def test_get_message_by_index():
+    """get_message_by_index should return correct message or None."""
+    from today import get_message_by_index
+    assert get_message_by_index(0) == MESSAGES[0]
+    assert get_message_by_index(len(MESSAGES)-1) == MESSAGES[-1]
+    assert get_message_by_index(-1) is None
+    assert get_message_by_index(999) is None
+
 def test_get_random_message():
     """get_random_message should return a message from MESSAGES."""
     from today import get_random_message
