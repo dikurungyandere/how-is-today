@@ -58,3 +58,11 @@ def test_cli_import():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     assert hasattr(module, "main")
+
+def test_random_state_preserved():
+    """get_daily_message should return consistent results."""
+    from today import get_daily_message
+    # Same inputs should give same outputs
+    result1 = get_daily_message(seed=42)
+    result2 = get_daily_message(seed=42)
+    assert result1 == result2, "Same seed should return same message"

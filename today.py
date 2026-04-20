@@ -14,6 +14,7 @@ from datetime import datetime
 from typing import Optional, List
 
 import random
+from random import Random
 import json
 import sys
 import argparse
@@ -57,8 +58,9 @@ def get_daily_message(seed: Optional[int] = None, date: Optional[datetime] = Non
         date = datetime.now()
     if seed is None:
         seed = date.year * 10000 + date.month * 100 + date.day
-    random.seed(seed)
-    return random.choice(MESSAGES)
+    # Use local Random instance to avoid affecting global random state
+    local_random = Random(seed)
+    return local_random.choice(MESSAGES)
 
 VERSION = "1.0.0"
 
