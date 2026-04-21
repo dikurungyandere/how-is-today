@@ -81,3 +81,9 @@ def test_load_messages_from_nonexistent_file():
     from today import load_messages_from_file
     result = load_messages_from_file("/nonexistent/file.txt")
     assert result is None
+
+def test_load_config_returns_dict():
+    """load_config should return a dict."""
+    from today import load_config
+    config = load_config()
+    assert isinstance(config, dict)

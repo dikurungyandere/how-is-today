@@ -19,6 +19,7 @@ import json
 import sys
 import argparse
 import os
+import pathlib
 
 MESSAGES: List[str] = [
     "Today is a great day! 🌟",
@@ -58,6 +59,21 @@ def load_messages_from_file(filepath: str) -> Optional[List[str]]:
         messages = [line.strip() for line in f if line.strip()]
     return messages if messages else None
 
+def load_config() -> dict:
+    """Load user config from ~/.config/how-is-today.json or equivalent."""
+    config_paths = [
+        pathlib.Path.home() / ".config" / "how-is-today.json",
+        pathlib.Path.home() / ".how-is-today.json",
+    ]
+    for path in config_paths:
+        if path.exists():
+            try:
+                with open(path) as f:
+                    return json.load(f)
+            except (json.JSONDecodeError, IOError):
+                pass
+    return {}
+
 def get_random_message() -> str:
     """Return a random message (not seeded by date)."""
     return random.choice(MESSAGES)
@@ -90,7 +106,22 @@ def main():
     parser.add_argument("-s", "--seed", type=int, help="Custom seed for message (overrides date-based seeding)")
     parser.add_argument("-i", "--index", type=int, help="Get message by index (0-based)")
     parser.add_argument("-f", "--messages-file", type=str, help="Load custom messages from file (one per line)")
+    parser.add_argument("--config", type=str, help="Path to config file (JSON)")
     args = parser.parse_args()
+    
+    # Load config file if specified, or use default config
+    config = {}
+    if args.config:
+        config_path = pathlib.Path(args.config)
+        if config_path.exists():
+            try:
+                with open(config_path) as f:
+                    config = json.load(f)
+            except (json.JSONDecodeError, IOError) as e:
+                print(f"Error: Could not load config: {e}", file=sys.stderr)
+                sys.exit(1)
+    else:
+        config = load_config()
     
     # Load custom messages if file specified
     custom_messages = None
