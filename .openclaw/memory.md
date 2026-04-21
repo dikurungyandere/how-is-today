@@ -7,3 +7,4 @@
 - 2025-04-20: Fixed get_daily_message to use local Random - avoids corrupting global random state.
 - 2025-04-21: Added --messages-file/-f option to load custom messages from file.
 - 2025-04-21: Improved README with usage examples, installation instructions, and Python API docs.
+- 2025-04-22: Added config file support (load_config, --config CLI option)
