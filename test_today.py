@@ -66,3 +66,18 @@ def test_random_state_preserved():
     result1 = get_daily_message(seed=42)
     result2 = get_daily_message(seed=42)
     assert result1 == result2, "Same seed should return same message"
+
+def test_load_messages_from_file(tmp_path):
+    """load_messages_from_file should load custom messages."""
+    from today import load_messages_from_file
+    # Create a temp file with custom messages
+    msg_file = tmp_path / "messages.txt"
+    msg_file.write_text("Custom1\nCustom2\nCustom3\n")
+    messages = load_messages_from_file(str(msg_file))
+    assert messages == ["Custom1", "Custom2", "Custom3"]
+
+def test_load_messages_from_nonexistent_file():
+    """load_messages_from_file should return None for missing file."""
+    from today import load_messages_from_file
+    result = load_messages_from_file("/nonexistent/file.txt")
+    assert result is None

@@ -18,6 +18,7 @@ from random import Random
 import json
 import sys
 import argparse
+import os
 
 MESSAGES: List[str] = [
     "Today is a great day! 🌟",
@@ -42,11 +43,20 @@ def get_message_count() -> int:
     """Return the total number of available messages."""
     return len(MESSAGES)
 
-def get_message_by_index(index: int) -> Optional[str]:
+def get_message_by_index(index: int, messages: Optional[List[str]] = None) -> Optional[str]:
     """Return message at given index, or None if out of range."""
-    if 0 <= index < len(MESSAGES):
-        return MESSAGES[index]
+    msg_list = messages if messages is not None else MESSAGES
+    if 0 <= index < len(msg_list):
+        return msg_list[index]
     return None
+
+def load_messages_from_file(filepath: str) -> Optional[List[str]]:
+    """Load custom messages from a file (one per line)."""
+    if not os.path.exists(filepath):
+        return None
+    with open(filepath, "r") as f:
+        messages = [line.strip() for line in f if line.strip()]
+    return messages if messages else None
 
 def get_random_message() -> str:
     """Return a random message (not seeded by date)."""
@@ -79,11 +89,22 @@ def main():
     parser.add_argument("-v", "--verbose", action="store_true", help="Show extra info (seed, date)")
     parser.add_argument("-s", "--seed", type=int, help="Custom seed for message (overrides date-based seeding)")
     parser.add_argument("-i", "--index", type=int, help="Get message by index (0-based)")
+    parser.add_argument("-f", "--messages-file", type=str, help="Load custom messages from file (one per line)")
     args = parser.parse_args()
     
+    # Load custom messages if file specified
+    custom_messages = None
+    if args.messages_file:
+        custom_messages = load_messages_from_file(args.messages_file)
+        if custom_messages is None:
+            print(f"Error: Could not load messages from '{args.messages_file}'", file=sys.stderr)
+            sys.exit(1)
+    
+    active_messages = custom_messages if custom_messages is not None else MESSAGES
+    
     if args.list:
-        count = args.count if args.count > 1 else len(MESSAGES)
-        for i, msg in enumerate(MESSAGES[:count], 1):
+        count = args.count if args.count > 1 else len(active_messages)
+        for i, msg in enumerate(active_messages[:count], 1):
             print(f"{i}. {msg}")
         return
 
@@ -92,9 +113,9 @@ def main():
         return
 
     if args.index is not None:
-        msg = get_message_by_index(args.index)
+        msg = get_message_by_index(args.index, custom_messages)
         if msg is None:
-            print(f"Error: Index {args.index} out of range (0-{len(MESSAGES)-1})", file=sys.stderr)
+            print(f"Error: Index {args.index} out of range (0-{len(active_messages)-1})", file=sys.stderr)
             sys.exit(1)
         print(msg)
         return
@@ -114,8 +135,9 @@ def main():
 
     custom_seed = args.seed if args.seed else None
     messages = []
+    msg_source = custom_messages if custom_messages is not None else MESSAGES
     if args.random:
-        messages = [random.choice(MESSAGES) for _ in range(args.count)]
+        messages = [random.choice(msg_source) for _ in range(args.count)]
     elif args.message or args.count > 1:
         messages = [get_daily_message(seed=(custom_seed + i) if custom_seed else i, date=target_date) for i in range(args.count)]
     else:
