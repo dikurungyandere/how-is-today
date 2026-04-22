@@ -87,3 +87,17 @@ def test_load_config_returns_dict():
     from today import load_config
     config = load_config()
     assert isinstance(config, dict)
+
+def test_get_shuffled_messages():
+    """get_shuffled_messages should return shuffled list."""
+    from today import get_shuffled_messages, MESSAGES
+    result = get_shuffled_messages(seed=123)
+    assert isinstance(result, list)
+    assert len(result) == len(MESSAGES)
+    assert set(result) == set(MESSAGES)
+
+def test_get_shuffled_messages_with_count():
+    """get_shuffled_messages with count should limit results."""
+    from today import get_shuffled_messages
+    result = get_shuffled_messages(seed=42, count=5)
+    assert len(result) == 5
