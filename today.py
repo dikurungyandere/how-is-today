@@ -8,7 +8,7 @@ Examples:
 """
 
 __all__ = ["get_daily_message", "get_random_message", "get_message_count",
-           "get_message_by_index", "MESSAGES", "VERSION"]
+           "get_message_by_index", "get_shuffled_messages", "MESSAGES", "VERSION"]
 
 from datetime import datetime
 from typing import Optional, List
@@ -88,6 +88,19 @@ def get_daily_message(seed: Optional[int] = None, date: Optional[datetime] = Non
     local_random = Random(seed)
     return local_random.choice(MESSAGES)
 
+def get_shuffled_messages(seed: Optional[int] = None, date: Optional[datetime] = None, count: Optional[int] = None) -> List[str]:
+    """Get all messages in shuffled order (deterministic based on seed/date)."""
+    if date is None:
+        date = datetime.now()
+    if seed is None:
+        seed = date.year * 10000 + date.month * 100 + date.day
+    local_random = Random(seed)
+    shuffled = MESSAGES.copy()
+    local_random.shuffle(shuffled)
+    if count is not None:
+        return shuffled[:count]
+    return shuffled
+
 VERSION = "1.0.0"
 
 def main():
@@ -107,6 +120,7 @@ def main():
     parser.add_argument("-i", "--index", type=int, help="Get message by index (0-based)")
     parser.add_argument("-f", "--messages-file", type=str, help="Load custom messages from file (one per line)")
     parser.add_argument("--config", type=str, help="Path to config file (JSON)")
+    parser.add_argument("-S", "--shuffle", action="store_true", help="Shuffle messages deterministically")
     args = parser.parse_args()
     
     # Load config file if specified, or use default config
@@ -139,20 +153,7 @@ def main():
             print(f"{i}. {msg}")
         return
 
-    if args.version:
-        print(f"how-is-today {VERSION}")
-        return
-
-    if args.index is not None:
-        msg = get_message_by_index(args.index, custom_messages)
-        if msg is None:
-            print(f"Error: Index {args.index} out of range (0-{len(active_messages)-1})", file=sys.stderr)
-            sys.exit(1)
-        print(msg)
-        return
-
-    quiet = args.quiet
-
+    # Parse date and seed for message generation
     target_date = None
     if args.tomorrow:
         from datetime import timedelta
@@ -165,6 +166,26 @@ def main():
             sys.exit(1)
 
     custom_seed = args.seed if args.seed else None
+
+    if args.version:
+        print(f"how-is-today {VERSION}")
+        return
+
+    if args.shuffle:
+        shuffled = get_shuffled_messages(seed=custom_seed, date=target_date, count=args.count)
+        for msg in shuffled:
+            print(msg)
+        return
+
+    if args.index is not None:
+        msg = get_message_by_index(args.index, custom_messages)
+        if msg is None:
+            print(f"Error: Index {args.index} out of range (0-{len(active_messages)-1})", file=sys.stderr)
+            sys.exit(1)
+        print(msg)
+        return
+
+    quiet = args.quiet
     messages = []
     msg_source = custom_messages if custom_messages is not None else MESSAGES
     if args.random:
