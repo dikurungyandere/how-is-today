@@ -101,3 +101,18 @@ def test_get_shuffled_messages_with_count():
     from today import get_shuffled_messages
     result = get_shuffled_messages(seed=42, count=5)
     assert len(result) == 5
+
+def test_strip_emoji():
+    """strip_emoji should remove emojis from text."""
+    import re
+    emoji_pattern = re.compile("[""\U0001F600-\U0001F64F"
+                      "\U0001F300-\U0001F5FF"
+                      "\U0001F680-\U0001F6FF"
+                      "\U0001F1E0-\U0001F1FF"
+                      "\U00002702-\U000027B0"
+                      "\U000024C2-\U0001F251]", re.UNICODE)
+    def strip_emoji(text):
+        return emoji_pattern.sub("", text).strip()
+    result = strip_emoji("Today is a great day! 🌟")
+    assert result == "Today is a great day!"
+    assert "🌟" not in result

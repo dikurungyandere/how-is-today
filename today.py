@@ -121,7 +121,20 @@ def main():
     parser.add_argument("-f", "--messages-file", type=str, help="Load custom messages from file (one per line)")
     parser.add_argument("--config", type=str, help="Path to config file (JSON)")
     parser.add_argument("-S", "--shuffle", action="store_true", help="Shuffle messages deterministically")
+    parser.add_argument("-e", "--strip-emoji", action="store_true", help="Remove emojis from output")
     args = parser.parse_args()
+    
+    # Helper to strip emojis from text
+    import re
+    emoji_pattern = re.compile("[""\U0001F600-\U0001F64F"
+                      "\U0001F300-\U0001F5FF"
+                      "\U0001F680-\U0001F6FF"
+                      "\U0001F1E0-\U0001F1FF"
+                      "\U00002702-\U000027B0"
+                      "\U000024C2-\U0001F251]", re.UNICODE)
+    
+    def strip_emoji(text: str) -> str:
+        return emoji_pattern.sub("", text).strip()
     
     # Load config file if specified, or use default config
     config = {}
@@ -174,7 +187,7 @@ def main():
     if args.shuffle:
         shuffled = get_shuffled_messages(seed=custom_seed, date=target_date, count=args.count)
         for msg in shuffled:
-            print(msg)
+            print(strip_emoji(msg) if args.strip_emoji else msg)
         return
 
     if args.index is not None:
@@ -182,7 +195,7 @@ def main():
         if msg is None:
             print(f"Error: Index {args.index} out of range (0-{len(active_messages)-1})", file=sys.stderr)
             sys.exit(1)
-        print(msg)
+        print(strip_emoji(msg) if args.strip_emoji else msg)
         return
 
     quiet = args.quiet
@@ -213,7 +226,8 @@ def main():
         print(json.dumps(output))
     else:
         for msg in messages:
-            print(msg)
+            output_msg = strip_emoji(msg) if args.strip_emoji else msg
+            print(output_msg)
 
     if args.verbose and not args.json:
         seed = custom_seed if custom_seed else (target_date.year * 10000 + target_date.month * 100 + target_date.day) if target_date else int(datetime.now().strftime("%Y%m%d"))
