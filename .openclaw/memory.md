@@ -9,3 +9,4 @@
 - 2025-04-21: Improved README with usage examples, installation instructions, and Python API docs.
 - 2025-04-22: Added config file support (load_config, --config CLI option)
 - 2025-04-23: Added --shuffle/-S option for deterministic message shuffling
+- 2025-04-23: Added tests for get_shuffled_messages (basic + count limit)
