@@ -116,3 +116,10 @@ def test_strip_emoji():
     result = strip_emoji("Today is a great day! 🌟")
     assert result == "Today is a great day!"
     assert "🌟" not in result
+
+def test_cli_version_option():
+    """CLI should return version string with --version."""
+    import subprocess
+    result = subprocess.run(["python", "today.py", "--version"], capture_output=True, text=True)
+    assert result.returncode == 0
+    assert "how-is-today 1.0.0" in result.stdout
