@@ -11,3 +11,4 @@
 - 2025-04-23: Added --shuffle/-S option for deterministic message shuffling
 - 2025-04-23: Added tests for get_shuffled_messages (basic + count limit)
 - 2025-04-24: Added --strip-emoji/-e option to remove emojis from output
+- 2025-04-25: Added test for CLI --strip-emoji option
