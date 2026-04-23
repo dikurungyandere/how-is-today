@@ -24,7 +24,8 @@ import pathlib
 MESSAGES: List[str] = [
     "Today is a great day! 🌟",
     "Keep pushing, you're doing amazing! 💪",
-    "A fresh start awaits you! ✨",
+    "A fresh start awaits you! ✨
+    ",
     "Small steps lead to big changes! 🚀",
     "Today brings new opportunities! 🎯",
     "Believe in yourself today! 💫",
@@ -110,6 +111,7 @@ def main():
     parser.add_argument("-r", "--random", action="store_true", help="Get a random message (not seeded by date)")
     parser.add_argument("-d", "--date", type=str, help="Get message for date (YYYY-MM-DD)")
     parser.add_argument("-t", "--tomorrow", action="store_true", help="Get message for tomorrow")
+    parser.add_argument("-y", "--yesterday", action="store_true", help="Get message for yesterday")
     parser.add_argument("-j", "--json", action="store_true", help="Output as JSON")
     parser.add_argument("-l", "--list", action="store_true", help="List all available messages")
     parser.add_argument("-o", "--output", type=str, help="Save message to file")
