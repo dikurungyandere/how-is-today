@@ -123,3 +123,13 @@ def test_cli_version_option():
     result = subprocess.run(["python", "today.py", "--version"], capture_output=True, text=True)
     assert result.returncode == 0
     assert "how-is-today 1.0.0" in result.stdout
+
+def test_cli_list_with_count():
+    """CLI --list with --count should output specified number of messages."""
+    import subprocess
+    result = subprocess.run(["python", "today.py", "--list", "--count", "3"], capture_output=True, text=True)
+    assert result.returncode == 0
+    lines = [line.strip() for line in result.stdout.split("\n") if line.strip()]
+    assert len(lines) == 3
+    for i, line in enumerate(lines, 1):
+        assert line.startswith(f"{i}. ")
