@@ -20,12 +20,12 @@ import sys
 import argparse
 import os
 import pathlib
+import re
 
 MESSAGES: List[str] = [
     "Today is a great day! 🌟",
     "Keep pushing, you're doing amazing! 💪",
-    "A fresh start awaits you! ✨
-    ",
+    "A fresh start awaits you! ✨",
     "Small steps lead to big changes! 🚀",
     "Today brings new opportunities! 🎯",
     "Believe in yourself today! 💫",
@@ -102,6 +102,19 @@ def get_shuffled_messages(seed: Optional[int] = None, date: Optional[datetime] =
         return shuffled[:count]
     return shuffled
 
+# Emoji stripping utility
+emoji_pattern = re.compile("["
+                      "\U0001F600-\U0001F64F"
+                      "\U0001F300-\U0001F5FF"
+                      "\U0001F680-\U0001F6FF"
+                      "\U0001F1E0-\U0001F1FF"
+                      "\U00002702-\U000027B0"
+                      "\U000024C2-\U0001F251]", re.UNICODE)
+
+def strip_emoji(text: str) -> str:
+    """Remove emojis from input text."""
+    return emoji_pattern.sub("", text).strip()
+
 VERSION = "1.0.0"
 
 def main():
@@ -125,18 +138,6 @@ def main():
     parser.add_argument("-S", "--shuffle", action="store_true", help="Shuffle messages deterministically")
     parser.add_argument("-e", "--strip-emoji", action="store_true", help="Remove emojis from output")
     args = parser.parse_args()
-    
-    # Helper to strip emojis from text
-    import re
-    emoji_pattern = re.compile("[""\U0001F600-\U0001F64F"
-                      "\U0001F300-\U0001F5FF"
-                      "\U0001F680-\U0001F6FF"
-                      "\U0001F1E0-\U0001F1FF"
-                      "\U00002702-\U000027B0"
-                      "\U000024C2-\U0001F251]", re.UNICODE)
-    
-    def strip_emoji(text: str) -> str:
-        return emoji_pattern.sub("", text).strip()
     
     # Load config file if specified, or use default config
     config = {}
