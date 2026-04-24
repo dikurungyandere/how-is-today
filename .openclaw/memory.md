@@ -14,3 +14,4 @@
 - 2025-04-25: Added test for CLI --strip-emoji option
 - 2026-04-23: Added test for --version CLI option
 - 2026-04-24: Refactored emoji stripping to module level, fixed MESSAGES syntax error
+- 2026-04-24: Added test for --list --count CLI option
