@@ -133,3 +133,15 @@ def test_cli_list_with_count():
     assert len(lines) == 3
     for i, line in enumerate(lines, 1):
         assert line.startswith(f"{i}. ")
+def test_cli_strip_emoji_option():
+    """CLI should support -e/--strip-emoji to remove emojis from output."""
+    import subprocess
+    result = subprocess.run(["python", "today.py", "-m", "-e"], capture_output=True, text=True)
+    assert result.returncode == 0
+    output = result.stdout.strip()
+    # Should contain a message without emojis
+    assert "🌟" not in output
+    assert "💪" not in output
+    assert "✨" not in output
+    # Should still contain text
+    assert len(output) > 0
