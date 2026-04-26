@@ -2,6 +2,7 @@
 """Tests for today.py"""
 
 import pytest
+import json
 from today import get_daily_message, get_message_count, MESSAGES, strip_emoji
 
 def test_get_daily_message_returns_string():
@@ -87,6 +88,23 @@ def test_load_config_returns_dict():
     from today import load_config
     config = load_config()
     assert isinstance(config, dict)
+
+def test_load_config_loads_file(tmp_path, monkeypatch):
+    """load_config should load config from file."""
+    from today import load_config
+    # Set up a temporary directory as HOME
+    home = tmp_path / "home"
+    home.mkdir()
+    monkeypatch.setenv("HOME", str(home))
+    # Create a config file in the first expected location: ~/.config/how-is-today.json
+    config_dir = home / ".config"
+    config_dir.mkdir()
+    config_file = config_dir / "how-is-today.json"
+    config_content = {"key": "value", "number": 42}
+    config_file.write_text(json.dumps(config_content))
+    # Now call load_config and check the result
+    result = load_config()
+    assert result == config_content
 
 def test_get_shuffled_messages():
     """get_shuffled_messages should return shuffled list."""
