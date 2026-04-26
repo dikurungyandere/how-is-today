@@ -17,3 +17,4 @@
 - 2026-04-24: Added test for --list --count CLI option
 - 2026-04-26: Added strip_emoji function to public API and test CLI --strip-emoji option
 - 2026-04-26: Improved test_strip_emoji function with comprehensive edge cases
+- 2026-04-26: Added test for load_config loading from file
