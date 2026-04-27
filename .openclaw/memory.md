@@ -1,3 +1,4 @@
+- 2026-04-27: Improved load_messages_from_file to ignore empty lines and comments, updated test.
 # Memory
 
 - 2025-04-18: Added get_random_message() utility function and test.
