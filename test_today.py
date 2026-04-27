@@ -158,3 +158,32 @@ def test_cli_strip_emoji_option():
     assert "✨" not in output
     # Should still contain text
     assert len(output) > 0
+
+def test_cli_output_flag():
+    """CLI should support -o/--output to write message to file."""
+    import subprocess
+    import tempfile
+    import os
+    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='\.txt') as f:
+        temp_path = f.name
+    try:
+        # Test without --quiet: should write to file and print confirmation to stderr
+        result = subprocess.run(["python", "today.py", "-m", "-o", temp_path], capture_output=True, text=True)
+        assert result.returncode == 0
+        assert f"Saved to {temp_path}" in result.stderr
+        # Check file content
+        with open(temp_path, 'r') as f:
+            content = f.read().strip()
+        assert content in MESSAGES  # Should be one of the messages
+        # Test with --quiet: should write to file and no stdout/stderr
+        result2 = subprocess.run(["python", "today.py", "-m", "-o", temp_path, "-q"], capture_output=True, text=True)
+        assert result2.returncode == 0
+        assert result2.stdout == ""
+        assert result2.stderr == ""
+        with open(temp_path, 'r') as f:
+            content2 = f.read().strip()
+        assert content2 in MESSAGES
+    finally:
+        if os.path.exists(temp_path):
+            os.unlink(temp_path)
+
