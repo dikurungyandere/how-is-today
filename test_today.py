@@ -69,11 +69,11 @@ def test_random_state_preserved():
     assert result1 == result2, "Same seed should return same message"
 
 def test_load_messages_from_file(tmp_path):
-    """load_messages_from_file should load custom messages."""
+    """load_messages_from_file should load custom messages, ignoring empty lines and comments."""
     from today import load_messages_from_file
-    # Create a temp file with custom messages
+    # Create a temp file with custom messages, empty lines, and comments
     msg_file = tmp_path / "messages.txt"
-    msg_file.write_text("Custom1\nCustom2\nCustom3\n")
+    msg_file.write_text("# This is a comment\nCustom1\n\nCustom2\n# Another comment\nCustom3\n")
     messages = load_messages_from_file(str(msg_file))
     assert messages == ["Custom1", "Custom2", "Custom3"]
 

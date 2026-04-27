@@ -54,11 +54,16 @@ def get_message_by_index(index: int, messages: Optional[List[str]] = None) -> Op
     return None
 
 def load_messages_from_file(filepath: str) -> Optional[List[str]]:
-    """Load custom messages from a file (one per line)."""
+    """Load custom messages from a file (one per line, ignoring empty lines and comments)."""
     if not os.path.exists(filepath):
         return None
     with open(filepath, "r") as f:
-        messages = [line.strip() for line in f if line.strip()]
+        messages = []
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith('#'):
+                continue
+            messages.append(line)
     return messages if messages else None
 
 def load_config() -> dict:
