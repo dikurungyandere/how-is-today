@@ -18,3 +18,4 @@
 - 2026-04-26: Added strip_emoji function to public API and test CLI --strip-emoji option
 - 2026-04-26: Improved test_strip_emoji function with comprehensive edge cases
 - 2026-04-26: Added test for load_config loading from file
+- 2026-04-27: Exported load_messages_from_file and load_config functions in __all__
