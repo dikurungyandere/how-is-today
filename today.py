@@ -8,7 +8,8 @@ Examples:
 """
 
 __all__ = ["get_daily_message", "get_random_message", "get_message_count",
-           "get_message_by_index", "get_shuffled_messages", "MESSAGES", "VERSION", "strip_emoji"]
+           "get_message_by_index", "get_shuffled_messages", "MESSAGES", "VERSION", "strip_emoji",
+           "load_messages_from_file", "load_config"]
 
 from datetime import datetime
 from typing import Optional, List
