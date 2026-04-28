@@ -25,3 +25,6 @@
 - 2026-04-27: Added test for CLI output flag functionality
 - 2026-04-27: Added test for CLI output flag functionality
 - 2026-04-28: Added test for CLI --total flag to show total number of messages
+Task completed: Added test for CLI --total flag
+Added test for CLI --total flag to show total number of messages
+Task completed: Added test for CLI --total flag to show total number of messages
