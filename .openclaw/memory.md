@@ -24,3 +24,4 @@
 - 2026-04-27: Exported load_messages_from_file and load_config functions in __all__
 - 2026-04-27: Added test for CLI output flag functionality
 - 2026-04-27: Added test for CLI output flag functionality
+- 2026-04-28: Added test for CLI --total flag to show total number of messages

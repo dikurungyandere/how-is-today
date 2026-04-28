@@ -186,4 +186,13 @@ def test_cli_output_flag():
     finally:
         if os.path.exists(temp_path):
             os.unlink(temp_path)
+def test_cli_total_flag():
+    """CLI should support --total to show total number of messages."""
+    import subprocess
+    from today import get_message_count
+    result = subprocess.run(["python", "today.py", "--total"], capture_output=True, text=True)
+    assert result.returncode == 0
+    expected = str(get_message_count())
+    assert result.stdout.strip() == expected
+
 
