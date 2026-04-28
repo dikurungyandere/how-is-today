@@ -180,6 +180,9 @@ def main():
     if args.tomorrow:
         from datetime import timedelta
         target_date = datetime.now() + timedelta(days=1)
+    elif args.yesterday:
+        from datetime import timedelta
+        target_date = datetime.now() - timedelta(days=1)
     elif args.date:
         try:
             target_date = datetime.strptime(args.date, "%Y-%m-%d")
