@@ -143,6 +143,7 @@ def main():
     parser.add_argument("--config", type=str, help="Path to config file (JSON)")
     parser.add_argument("-S", "--shuffle", action="store_true", help="Shuffle messages deterministically")
     parser.add_argument("-e", "--strip-emoji", action="store_true", help="Remove emojis from output")
+    parser.add_argument("--total", action="store_true", help="Show total number of messages and exit")
     args = parser.parse_args()
     
     # Load config file if specified, or use default config
@@ -194,6 +195,10 @@ def main():
 
     if args.version:
         print(f"how-is-today {VERSION}")
+        return
+
+    if args.total:
+        print(get_message_count())
         return
 
     if args.shuffle:
