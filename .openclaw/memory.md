@@ -1,6 +1,7 @@
-- 2026-04-27: Improved load_messages_from_file to ignore empty lines and comments, updated test.
+- 2026-04-28: Added -y/--yesterday flag to get message for previous day
 # Memory
 
+- 2026-04-27: Improved load_messages_from_file to ignore empty lines and comments, updated test.
 - 2025-04-18: Added get_random_message() utility function and test.
 - 2025-04-19: Added __all__ exports and improved module docstring.
 - 2025-04-19: Added -i/--index CLI option to get message by index + test.
