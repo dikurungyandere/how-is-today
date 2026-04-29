@@ -23,8 +23,9 @@
 - 2026-04-26: Added test for load_config loading from file
 - 2026-04-27: Exported load_messages_from_file and load_config functions in __all__
 - 2026-04-27: Added test for CLI output flag functionality
-- 2026-04-27: Added test for CLI output flag functionality
 - 2026-04-28: Added test for CLI --total flag to show total number of messages
 Task completed: Added test for CLI --total flag
 Added test for CLI --total flag to show total number of messages
 Task completed: Added test for CLI --total flag to show total number of messages
+- 2026-04-29: Improved docstring for get_shuffled_messages function with detailed parameter and return descriptions
+- 2026-04-29: Improved docstring for get_shuffled_messages function with detailed parameter and return descriptions
