@@ -196,3 +196,17 @@ def test_cli_total_flag():
     assert result.stdout.strip() == expected
 
 
+
+def test_cli_shuffle_option():
+    """CLI should support --shuffle option for deterministic shuffling."""
+    import subprocess
+    result = subprocess.run(["python", "today.py", "--shuffle", "--count", "3"], capture_output=True, text=True)
+    assert result.returncode == 0
+    lines = [line.strip() for line in result.stdout.split("\n") if line.strip()]
+    assert len(lines) == 3
+    # Should be shuffled messages (deterministic based on date)
+    # Just check that we got 3 lines and they're from our messages
+    from today import MESSAGES
+    for line in lines:
+        assert line in MESSAGES
+
