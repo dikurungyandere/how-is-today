@@ -210,3 +210,21 @@ def test_cli_shuffle_option():
     for line in lines:
         assert line in MESSAGES
 
+
+def test_get_date_seed():
+    """get_date_seed should return correct seed based on date."""
+    from today import get_date_seed
+    from datetime import datetime
+
+    # Test with specific date
+    test_date = datetime(2023, 5, 15)
+    expected_seed = 2023 * 10000 + 5 * 100 + 15  # 20230515
+    assert get_date_seed(test_date) == expected_seed
+
+    # Test with None (should use current date)
+    # We can't test exact value since it depends on when it's run,
+    # but we can test that it returns an integer
+    seed = get_date_seed(None)
+    assert isinstance(seed, int)
+    # Seed should be reasonable for current year (assuming we're in 2020s)
+    assert 20200101 <= seed <= 20301231

@@ -8,7 +8,8 @@ Examples:
 """
 
 __all__ = ["get_daily_message", "get_random_message", "get_message_count",
-           "get_message_by_index", "get_shuffled_messages", "MESSAGES", "VERSION", "strip_emoji",
+           "get_message_by_index", "get_shuffled_messages", "get_date_seed",
+           "MESSAGES", "VERSION", "strip_emoji",
            "load_messages_from_file", "load_config"]
 
 from datetime import datetime
@@ -116,6 +117,19 @@ def get_shuffled_messages(seed: Optional[int] = None, date: Optional[datetime] =
     if count is not None:
         return shuffled[:count]
     return shuffled
+
+def get_date_seed(date: Optional[datetime] = None) -> int:
+    """Get the deterministic seed for a given date (or today if None).
+    
+    Args:
+        date: Optional date to derive the seed from. If None, uses current date.
+        
+    Returns:
+        Integer seed based on YYYYMMDD format.
+    """
+    if date is None:
+        date = datetime.now()
+    return date.year * 10000 + date.month * 100 + date.day
 
 # Emoji stripping utility
 emoji_pattern = re.compile("["
