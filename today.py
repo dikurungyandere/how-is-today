@@ -167,7 +167,13 @@ def main():
     parser.add_argument("-S", "--shuffle", action="store_true", help="Shuffle messages deterministically")
     parser.add_argument("-e", "--strip-emoji", action="store_true", help="Remove emojis from output")
     parser.add_argument("--total", action="store_true", help="Show total number of messages and exit")
+    parser.add_argument("-C", "--clear", action="store_true", help="Clear the terminal before output")
     args = parser.parse_args()
+    if args.clear:
+        if os.name == 'nt':
+            os.system('cls')
+        else:
+            os.system('clear')
     
     # Load config file if specified, or use default config
     config = {}
