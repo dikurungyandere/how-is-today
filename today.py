@@ -58,7 +58,7 @@ def load_messages_from_file(filepath: str) -> Optional[List[str]]:
     """Load custom messages from a file (one per line, ignoring empty lines and comments)."""
     if not os.path.exists(filepath):
         return None
-    with open(filepath, "r") as f:
+    with open(filepath, "r", encoding="utf-8") as f:
         messages = []
         for line in f:
             line = line.strip()
