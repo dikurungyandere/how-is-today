@@ -28,3 +28,4 @@
 - 2026-04-29: Added get_date_seed utility function for deterministic date-based seeding + test
 - 2026-04-30: Added --clear/-C option to clear terminal before output
 - 2026-04-30: Improved docstring for get_shuffled_messages function
+- 2026-04-30: Fix load_messages_from_file to specify UTF-8 encoding for proper Unicode handling
