@@ -26,3 +26,4 @@
 - 2026-04-29: Improved docstring for get_shuffled_messages function with detailed parameter and return descriptions
 - 2026-04-29: Added test for CLI --shuffle option
 - 2026-04-29: Added get_date_seed utility function for deterministic date-based seeding + test
+- 2026-04-30: Added --clear/-C option to clear terminal before output
