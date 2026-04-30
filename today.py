@@ -99,6 +99,10 @@ def get_daily_message(seed: Optional[int] = None, date: Optional[datetime] = Non
 def get_shuffled_messages(seed: Optional[int] = None, date: Optional[datetime] = None, count: Optional[int] = None) -> List[str]:
     """Get all messages in shuffled order (deterministic based on seed/date).
     
+    The same seed and date will always produce the same shuffled list, making
+    the output deterministic for a given day. If no seed is provided, the seed
+    is derived from the date.
+    
     Args:
         seed: Optional seed for the random number generator. If None, uses date-based seed.
         date: Optional date to derive the seed from. If None, uses current date.
