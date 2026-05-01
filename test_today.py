@@ -228,3 +228,37 @@ def test_get_date_seed():
     assert isinstance(seed, int)
     # Seed should be reasonable for current year (assuming we're in 2020s)
     assert 20200101 <= seed <= 20301231
+
+
+def test_get_weekday_message():
+    """get_weekday_message should return correct message for each weekday."""
+    from today import get_weekday_message, MESSAGES
+    
+    # Test all weekdays (0=Monday to 6=Sunday)
+    for weekday in range(7):
+        result = get_weekday_message(weekday)
+        assert isinstance(result, str)
+        assert result in MESSAGES
+        
+    # Test deterministic behavior - same weekday should return same message
+    monday_msg_1 = get_weekday_message(0)
+    monday_msg_2 = get_weekday_message(0)
+    assert monday_msg_1 == monday_msg_2
+    
+    # Different weekdays should return different messages (with high probability)
+    messages = [get_weekday_message(i) for i in range(7)]
+    # At least some should be different (though theoretically they could collide)
+    assert len(set(messages)) > 1  # Very unlikely all 7 are the same
+    
+    # Test error handling
+    try:
+        get_weekday_message(-1)
+        assert False, "Should have raised ValueError"
+    except ValueError:
+        pass  # Expected
+        
+    try:
+        get_weekday_message(7)
+        assert False, "Should have raised ValueError"
+    except ValueError:
+        pass  # Expected

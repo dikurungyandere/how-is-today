@@ -9,6 +9,7 @@ Examples:
 
 __all__ = ["get_daily_message", "get_random_message", "get_message_count",
            "get_message_by_index", "get_shuffled_messages", "get_date_seed",
+           "get_weekday_message",
            "MESSAGES", "VERSION", "strip_emoji",
            "load_messages_from_file", "load_config"]
 
@@ -135,6 +136,23 @@ def get_date_seed(date: Optional[datetime] = None) -> int:
         date = datetime.now()
     return date.year * 10000 + date.month * 100 + date.day
 
+def get_weekday_message(weekday: int) -> str:
+    """Get the message for a given weekday (0=Monday, 6=Sunday).
+    
+    The message is deterministic for each weekday, independent of the date.
+    
+    Args:
+        weekday: Integer from 0 (Monday) to 6 (Sunday).
+        
+    Returns:
+        The message for the given weekday.
+    """
+    if not 0 <= weekday <= 6:
+        raise ValueError("Weekday must be between 0 (Monday) and 6 (Sunday)")
+    # Use a seed that is unique for each weekday and unlikely to conflict with date-based seeds.
+    seed = 10000 + weekday  # 10000 to 10006
+    return get_daily_message(seed=seed)
+
 # Emoji stripping utility
 emoji_pattern = re.compile("["
                       "\U0001F600-\U0001F64F"
@@ -169,6 +187,7 @@ def main():
     parser.add_argument("-f", "--messages-file", type=str, help="Load custom messages from file (one per line)")
     parser.add_argument("--config", type=str, help="Path to config file (JSON)")
     parser.add_argument("-S", "--shuffle", action="store_true", help="Shuffle messages deterministically")
+    parser.add_argument("-w", "--weekday", type=int, help="Get message for a given weekday (0=Monday, 6=Sunday)")
     parser.add_argument("-e", "--strip-emoji", action="store_true", help="Remove emojis from output")
     parser.add_argument("--total", action="store_true", help="Show total number of messages and exit")
     parser.add_argument("-C", "--clear", action="store_true", help="Clear the terminal before output")
@@ -247,6 +266,14 @@ def main():
             sys.exit(1)
         print(strip_emoji(msg) if args.strip_emoji else msg)
         return
+
+    if args.weekday is not None:
+        try:
+            msg = get_weekday_message(args.weekday)
+            messages = [msg] * args.count
+        except ValueError as e:
+            print(f"Error: {e}", file=sys.stderr)
+            sys.exit(1)
 
     quiet = args.quiet
     messages = []
