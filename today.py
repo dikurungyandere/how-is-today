@@ -224,8 +224,12 @@ def main():
     
     if args.list:
         count = args.count if args.count > 1 else len(active_messages)
-        for i, msg in enumerate(active_messages[:count], 1):
-            print(f"{i}. {msg}")
+        messages_to_show = active_messages[:count]
+        if args.json:
+            print(json.dumps(messages_to_show))
+        else:
+            for i, msg in enumerate(messages_to_show, 1):
+                print(f"{i}. {msg}")
         return
 
     # Parse date and seed for message generation

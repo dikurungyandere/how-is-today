@@ -14,6 +14,7 @@ pip install -e .
 python today.py --message    # Show today's message
 python today.py --random    # Show random message
 python today.py --list      # List all messages
+python today.py --list --json  # Output all messages as JSON array
 python today.py -i 5        # Get message by index
 python today.py -t         # Get message for tomorrow
 python today.py -d 2025-01-01  # Get message for specific date
