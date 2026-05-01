@@ -210,6 +210,23 @@ def test_cli_shuffle_option():
     for line in lines:
         assert line in MESSAGES
 
+def test_cli_weekday_option():
+    """CLI should support --weekday option to get message for a given weekday."""
+    import subprocess
+    from today import get_weekday_message
+    # Test a few weekdays
+    for weekday in [0, 3, 6]:  # Monday, Thursday, Sunday
+        expected = get_weekday_message(weekday)
+        result = subprocess.run(["python", "today.py", "--weekday", str(weekday)], capture_output=True, text=True)
+        assert result.returncode == 0
+        assert result.stdout.strip() == expected
+    # Test with count
+    result = subprocess.run(["python", "today.py", "--weekday", "0", "--count", "2"], capture_output=True, text=True)
+    assert result.returncode == 0
+    lines = [line.strip() for line in result.stdout.split("\n") if line.strip()]
+    assert len(lines) == 2
+    assert lines[0] == lines[1] == get_weekday_message(0)
+
 
 def test_get_date_seed():
     """get_date_seed should return correct seed based on date."""
