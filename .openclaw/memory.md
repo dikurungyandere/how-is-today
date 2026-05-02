@@ -31,3 +31,4 @@
 - 2026-04-30: Fix load_messages_from_file to specify UTF-8 encoding for proper Unicode handling
 - 2026-05-01: Added get_weekday_message function and CLI option to get message for a given weekday (0=Monday, 6=Sunday)
 - 2026-05-01: Added --json support for --list to output messages as JSON array.
+- 2026-05-02: Added --next/-n flag to show messages for the next N consecutive days; fixed --weekday flow bug; added tests.
