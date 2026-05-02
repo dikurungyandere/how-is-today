@@ -164,7 +164,7 @@ def test_cli_output_flag():
     import subprocess
     import tempfile
     import os
-    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='\.txt') as f:
+    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.txt') as f:
         temp_path = f.name
     try:
         # Test without --quiet: should write to file and print confirmation to stderr
@@ -300,3 +300,42 @@ def test_cli_next_option_with_json():
     from today import MESSAGES
     for msg in data["messages"]:
         assert msg in MESSAGES
+
+def test_get_tomorrow_message():
+    """get_tomorrow_message should return a valid message string."""
+    from today import get_tomorrow_message, MESSAGES
+    msg = get_tomorrow_message()
+    assert isinstance(msg, str)
+    assert msg in MESSAGES
+
+def test_get_yesterday_message():
+    """get_yesterday_message should return a valid message string."""
+    from today import get_yesterday_message, MESSAGES
+    msg = get_yesterday_message()
+    assert isinstance(msg, str)
+    assert msg in MESSAGES
+
+def test_get_next_n_messages():
+    """get_next_n_messages should return a list of length n with valid messages."""
+    from today import get_next_n_messages, MESSAGES
+    n = 5
+    msgs = get_next_n_messages(n)
+    assert isinstance(msgs, list)
+    assert len(msgs) == n
+    for msg in msgs:
+        assert msg in MESSAGES
+
+def test_get_next_n_messages_zero():
+    """get_next_n_messages with n=0 should return empty list."""
+    from today import get_next_n_messages
+    assert get_next_n_messages(0) == []
+
+def test_get_next_n_messages_negative():
+    """get_next_n_messages with negative n should raise ValueError."""
+    from today import get_next_n_messages
+    try:
+        get_next_n_messages(-1)
+        assert False, "Should have raised ValueError"
+    except ValueError:
+        pass
+

@@ -9,7 +9,8 @@ Examples:
 
 __all__ = ["get_daily_message", "get_random_message", "get_message_count",
            "get_message_by_index", "get_shuffled_messages", "get_date_seed",
-           "get_weekday_message",
+           "get_weekday_message", "get_tomorrow_message", "get_yesterday_message",
+           "get_next_n_messages",
            "MESSAGES", "VERSION", "strip_emoji",
            "load_messages_from_file", "load_config"]
 
@@ -152,6 +153,45 @@ def get_weekday_message(weekday: int) -> str:
     # Use a seed that is unique for each weekday and unlikely to conflict with date-based seeds.
     seed = 10000 + weekday  # 10000 to 10006
     return get_daily_message(seed=seed)
+
+def get_tomorrow_message() -> str:
+    """Get the message for tomorrow.
+    
+    Returns:
+        The deterministic message for tomorrow based on the date.
+    """
+    from datetime import timedelta
+    return get_daily_message(date=datetime.now() + timedelta(days=1))
+
+def get_yesterday_message() -> str:
+    """Get the message for yesterday.
+    
+    Returns:
+        The deterministic message for yesterday based on the date.
+    """
+    from datetime import timedelta
+    return get_daily_message(date=datetime.now() - timedelta(days=1))
+
+def get_next_n_messages(n: int) -> List[str]:
+    """Get messages for the next N consecutive days starting from today.
+    
+    Args:
+        n: Number of consecutive days (must be non-negative).
+        
+    Returns:
+        A list of deterministic daily messages for the next N days.
+        
+    Raises:
+        ValueError: If n is negative.
+    """
+    if n < 0:
+        raise ValueError("n must be non-negative")
+    from datetime import timedelta
+    messages = []
+    for i in range(n):
+        day = datetime.now() + timedelta(days=i)
+        messages.append(get_daily_message(date=day))
+    return messages
 
 # Emoji stripping utility
 emoji_pattern = re.compile("["
