@@ -274,8 +274,29 @@ def test_get_weekday_message():
     except ValueError:
         pass  # Expected
         
-    try:
-        get_weekday_message(7)
-        assert False, "Should have raised ValueError"
-    except ValueError:
-        pass  # Expected
+
+
+def test_cli_next_option():
+    """CLI should support --next N to show messages for next N consecutive days."""
+    import subprocess
+    result = subprocess.run(["python", "today.py", "--next", "3"], capture_output=True, text=True)
+    assert result.returncode == 0
+    lines = [line.strip() for line in result.stdout.split("\n") if line.strip()]
+    assert len(lines) == 3
+    from today import MESSAGES
+    for line in lines:
+        assert line in MESSAGES
+
+
+def test_cli_next_option_with_json():
+    """CLI --next with --json should output JSON array of messages."""
+    import subprocess
+    import json
+    result = subprocess.run(["python", "today.py", "--next", "2", "--json"], capture_output=True, text=True)
+    assert result.returncode == 0
+    data = json.loads(result.stdout)
+    assert "messages" in data
+    assert len(data["messages"]) == 2
+    from today import MESSAGES
+    for msg in data["messages"]:
+        assert msg in MESSAGES

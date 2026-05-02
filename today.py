@@ -191,6 +191,7 @@ def main():
     parser.add_argument("-e", "--strip-emoji", action="store_true", help="Remove emojis from output")
     parser.add_argument("--total", action="store_true", help="Show total number of messages and exit")
     parser.add_argument("-C", "--clear", action="store_true", help="Clear the terminal before output")
+    parser.add_argument("-n", "--next", type=int, help="Show messages for the next N days starting from the target date")
     args = parser.parse_args()
     if args.clear:
         if os.name == 'nt':
@@ -278,17 +279,23 @@ def main():
         except ValueError as e:
             print(f"Error: {e}", file=sys.stderr)
             sys.exit(1)
-
-    quiet = args.quiet
-    messages = []
-    msg_source = custom_messages if custom_messages is not None else MESSAGES
-    if args.random:
-        messages = [random.choice(msg_source) for _ in range(args.count)]
-    elif args.message or args.count > 1:
-        messages = [get_daily_message(seed=(custom_seed + i) if custom_seed else i, date=target_date) for i in range(args.count)]
+    elif args.next is not None:
+        from datetime import timedelta
+        if target_date is None:
+            target_date = datetime.now()
+        messages = []
+        for i in range(args.next):
+            day = target_date + timedelta(days=i)
+            messages.append(get_daily_message(seed=custom_seed, date=day))
     else:
-        messages = [get_daily_message(seed=custom_seed, date=target_date)]
-    
+        msg_source = custom_messages if custom_messages is not None else MESSAGES
+        if args.random:
+            messages = [random.choice(msg_source) for _ in range(args.count)]
+        elif args.message or args.count > 1:
+            messages = [get_daily_message(seed=(custom_seed + i) if custom_seed else i, date=target_date) for i in range(args.count)]
+        else:
+            messages = [get_daily_message(seed=custom_seed, date=target_date)]
+
     if args.output:
         with open(args.output, "w") as f:
             f.write("\n".join(messages))
