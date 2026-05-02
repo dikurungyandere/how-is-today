@@ -10,7 +10,7 @@ Examples:
 __all__ = ["get_daily_message", "get_random_message", "get_message_count",
            "get_message_by_index", "get_shuffled_messages", "get_date_seed",
            "get_weekday_message", "get_tomorrow_message", "get_yesterday_message",
-           "get_next_n_messages",
+           "get_next_n_messages", "get_previous_n_messages",
            "MESSAGES", "VERSION", "strip_emoji",
            "load_messages_from_file", "load_config"]
 
@@ -193,6 +193,28 @@ def get_next_n_messages(n: int) -> List[str]:
         messages.append(get_daily_message(date=day))
     return messages
 
+def get_previous_n_messages(n: int) -> List[str]:
+    """Get messages for the previous N consecutive days ending with yesterday.
+    
+    Args:
+        n: Number of consecutive past days (must be non-negative).
+        
+    Returns:
+        A list of deterministic daily messages for the previous N days,
+        ordered from most recent to oldest (yesterday first, then going back).
+        
+    Raises:
+        ValueError: If n is negative.
+    """
+    if n < 0:
+        raise ValueError("n must be non-negative")
+    from datetime import timedelta
+    messages = []
+    for i in range(1, n + 1):  # Start from 1 day ago up to n days ago
+        day = datetime.now() - timedelta(days=i)
+        messages.append(get_daily_message(date=day))
+    return messages
+
 # Emoji stripping utility
 emoji_pattern = re.compile("["
                       "\U0001F600-\U0001F64F"
@@ -232,6 +254,7 @@ def main():
     parser.add_argument("--total", action="store_true", help="Show total number of messages and exit")
     parser.add_argument("-C", "--clear", action="store_true", help="Clear the terminal before output")
     parser.add_argument("-n", "--next", type=int, help="Show messages for the next N days starting from the target date")
+    parser.add_argument("-p", "--previous", type=int, help="Show messages for the previous N days ending with yesterday")
     args = parser.parse_args()
     if args.clear:
         if os.name == 'nt':
@@ -319,13 +342,21 @@ def main():
         except ValueError as e:
             print(f"Error: {e}", file=sys.stderr)
             sys.exit(1)
-    elif args.next is not None:
+    if args.next is not None:
         from datetime import timedelta
         if target_date is None:
             target_date = datetime.now()
         messages = []
         for i in range(args.next):
             day = target_date + timedelta(days=i)
+            messages.append(get_daily_message(seed=custom_seed, date=day))
+    elif args.previous is not None:
+        from datetime import timedelta
+        if target_date is None:
+            target_date = datetime.now()
+        messages = []
+        for i in range(1, args.previous + 1):  # Start from 1 day ago
+            day = target_date - timedelta(days=i)
             messages.append(get_daily_message(seed=custom_seed, date=day))
     else:
         msg_source = custom_messages if custom_messages is not None else MESSAGES

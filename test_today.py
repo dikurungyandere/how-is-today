@@ -339,3 +339,70 @@ def test_get_next_n_messages_negative():
     except ValueError:
         pass
 
+# --- New tests for get_previous_n_messages and --previous CLI flag ---
+
+def test_get_previous_n_messages():
+    """get_previous_n_messages should return a list of length n with valid messages."""
+    from today import get_previous_n_messages, MESSAGES
+    n = 5
+    msgs = get_previous_n_messages(n)
+    assert isinstance(msgs, list)
+    assert len(msgs) == n
+    for msg in msgs:
+        assert msg in MESSAGES
+
+def test_get_previous_n_messages_zero():
+    """get_previous_n_messages with n=0 should return empty list."""
+    from today import get_previous_n_messages
+    assert get_previous_n_messages(0) == []
+
+def test_get_previous_n_messages_negative():
+    """get_previous_n_messages with negative n should raise ValueError."""
+    from today import get_previous_n_messages
+    try:
+        get_previous_n_messages(-1)
+        assert False, "Should have raised ValueError"
+    except ValueError:
+        pass
+
+def test_cli_previous_option():
+    """CLI should support --previous/-p to show messages for previous N days."""
+    import subprocess
+    result = subprocess.run(["python", "today.py", "--previous", "3"], capture_output=True, text=True)
+    assert result.returncode == 0
+    lines = [line.strip() for line in result.stdout.split("\n") if line.strip()]
+    assert len(lines) == 3
+    from today import MESSAGES
+    for line in lines:
+        assert line in MESSAGES
+
+def test_cli_previous_option_with_json():
+    """CLI --previous with --json should output JSON array of messages."""
+    import subprocess
+    import json
+    result = subprocess.run(["python", "today.py", "--previous", "2", "--json"], capture_output=True, text=True)
+    assert result.returncode == 0
+    data = json.loads(result.stdout)
+    assert "messages" in data
+    assert len(data["messages"]) == 2
+    from today import MESSAGES
+    for msg in data["messages"]:
+        assert msg in MESSAGES
+
+def test_cli_previous_option_with_count():
+    """CLI --previous with --count should ignore count (uses --previous argument for count)."""
+    import subprocess
+    result = subprocess.run(["python", "today.py", "--previous", "5", "--count", "2"], capture_output=True, text=True)
+    assert result.returncode == 0
+    lines = [line.strip() for line in result.stdout.split("\n") if line.strip()]
+    # Should still return 5 messages (from --previous), ignoring --count
+    assert len(lines) == 5
+
+def test_cli_p_short_flag():
+    """CLI should support -p as short for --previous."""
+    import subprocess
+    result = subprocess.run(["python", "today.py", "-p", "2"], capture_output=True, text=True)
+    assert result.returncode == 0
+    lines = [line.strip() for line in result.stdout.split("\n") if line.strip()]
+    assert len(lines) == 2
+

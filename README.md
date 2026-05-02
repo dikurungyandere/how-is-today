@@ -17,6 +17,7 @@ python today.py --list      # List all messages
 python today.py --list --json  # Output all messages as JSON array
 python today.py -i 5        # Get message by index
 python today.py -t         # Get message for tomorrow
+python today.py --previous 3  # Get messages for the previous 3 days
 python today.py --next 7   # Get messages for the next 7 days
 python today.py -d 2025-01-01  # Get message for specific date
 python today.py --json      # Output as JSON
@@ -31,6 +32,7 @@ from today import get_daily_message, get_random_message, get_message_count
 print(get_daily_message())     # Message for today
 print(get_random_message())  # Random message
 print(get_message_count())    # Total messages (16)
+print(get_previous_n_messages(3))  # Messages for the previous 3 days
 ```
 
 ## Output
