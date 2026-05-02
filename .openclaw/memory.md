@@ -33,3 +33,4 @@
 - 2026-05-01: Added --json support for --list to output messages as JSON array.
 - 2026-05-02: Added --next/-n flag to show messages for the next N consecutive days; fixed --weekday flow bug; added tests.
 - 2026-05-02: Added convenience API functions: get_tomorrow_message(), get_yesterday_message(), get_next_n_messages(n) with tests; fixed test SyntaxWarning.
+- 2026-05-03: Added --previous/-p flag and get_previous_n_messages(n) API for past days; added 8 tests; updated README.
