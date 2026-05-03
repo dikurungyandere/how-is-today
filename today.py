@@ -10,7 +10,7 @@ Examples:
 __all__ = ["get_daily_message", "get_random_message", "get_message_count",
            "get_message_by_index", "get_shuffled_messages", "get_date_seed",
            "get_weekday_message", "get_tomorrow_message", "get_yesterday_message",
-           "get_next_n_messages", "get_previous_n_messages",
+           "get_next_n_messages", "get_previous_n_messages", "get_messages_between_dates",
            "MESSAGES", "VERSION", "strip_emoji",
            "load_messages_from_file", "load_config"]
 
@@ -100,16 +100,16 @@ def get_daily_message(seed: Optional[int] = None, date: Optional[datetime] = Non
 
 def get_shuffled_messages(seed: Optional[int] = None, date: Optional[datetime] = None, count: Optional[int] = None) -> List[str]:
     """Get all messages in shuffled order (deterministic based on seed/date).
-    
+
     The same seed and date will always produce the same shuffled list, making
     the output deterministic for a given day. If no seed is provided, the seed
     is derived from the date.
-    
+
     Args:
         seed: Optional seed for the random number generator. If None, uses date-based seed.
         date: Optional date to derive the seed from. If None, uses current date.
         count: Optional number of messages to return from the shuffled list. If None, returns all messages.
-        
+
     Returns:
         A list of messages in shuffled order.
     """
@@ -126,10 +126,10 @@ def get_shuffled_messages(seed: Optional[int] = None, date: Optional[datetime] =
 
 def get_date_seed(date: Optional[datetime] = None) -> int:
     """Get the deterministic seed for a given date (or today if None).
-    
+
     Args:
         date: Optional date to derive the seed from. If None, uses current date.
-        
+
     Returns:
         Integer seed based on YYYYMMDD format.
     """
@@ -139,12 +139,12 @@ def get_date_seed(date: Optional[datetime] = None) -> int:
 
 def get_weekday_message(weekday: int) -> str:
     """Get the message for a given weekday (0=Monday, 6=Sunday).
-    
+
     The message is deterministic for each weekday, independent of the date.
-    
+
     Args:
         weekday: Integer from 0 (Monday) to 6 (Sunday).
-        
+
     Returns:
         The message for the given weekday.
     """
@@ -156,7 +156,7 @@ def get_weekday_message(weekday: int) -> str:
 
 def get_tomorrow_message() -> str:
     """Get the message for tomorrow.
-    
+
     Returns:
         The deterministic message for tomorrow based on the date.
     """
@@ -165,7 +165,7 @@ def get_tomorrow_message() -> str:
 
 def get_yesterday_message() -> str:
     """Get the message for yesterday.
-    
+
     Returns:
         The deterministic message for yesterday based on the date.
     """
@@ -174,13 +174,13 @@ def get_yesterday_message() -> str:
 
 def get_next_n_messages(n: int) -> List[str]:
     """Get messages for the next N consecutive days starting from today.
-    
+
     Args:
         n: Number of consecutive days (must be non-negative).
-        
+
     Returns:
         A list of deterministic daily messages for the next N days.
-        
+
     Raises:
         ValueError: If n is negative.
     """
@@ -195,14 +195,14 @@ def get_next_n_messages(n: int) -> List[str]:
 
 def get_previous_n_messages(n: int) -> List[str]:
     """Get messages for the previous N consecutive days ending with yesterday.
-    
+
     Args:
         n: Number of consecutive past days (must be non-negative).
-        
+
     Returns:
         A list of deterministic daily messages for the previous N days,
         ordered from most recent to oldest (yesterday first, then going back).
-        
+
     Raises:
         ValueError: If n is negative.
     """
@@ -213,6 +213,33 @@ def get_previous_n_messages(n: int) -> List[str]:
     for i in range(1, n + 1):  # Start from 1 day ago up to n days ago
         day = datetime.now() - timedelta(days=i)
         messages.append(get_daily_message(date=day))
+    return messages
+
+def get_messages_between_dates(start_date: datetime, end_date: datetime, count: Optional[int] = None) -> List[str]:
+    """Get messages for each day in a date range [start_date, end_date] (inclusive).
+
+    Args:
+        start_date: Start date (inclusive).
+        end_date: End date (inclusive). Must be >= start_date.
+        count: Optional maximum number of messages to return. If None, returns all days in range.
+
+    Returns:
+        A list of deterministic daily messages for each day in the range,
+        ordered from start_date to end_date.
+
+    Raises:
+        ValueError: If end_date is before start_date.
+    """
+    if end_date < start_date:
+        raise ValueError("end_date must be >= start_date")
+    from datetime import timedelta
+    messages = []
+    current = start_date
+    while current <= end_date:
+        messages.append(get_daily_message(date=current))
+        current += timedelta(days=1)
+    if count is not None:
+        return messages[:count]
     return messages
 
 # Emoji stripping utility
@@ -261,7 +288,7 @@ def main():
             os.system('cls')
         else:
             os.system('clear')
-    
+
     # Load config file if specified, or use default config
     config = {}
     if args.config:
@@ -275,7 +302,7 @@ def main():
                 sys.exit(1)
     else:
         config = load_config()
-    
+
     # Load custom messages if file specified
     custom_messages = None
     if args.messages_file:
@@ -283,9 +310,9 @@ def main():
         if custom_messages is None:
             print(f"Error: Could not load messages from '{args.messages_file}'", file=sys.stderr)
             sys.exit(1)
-    
+
     active_messages = custom_messages if custom_messages is not None else MESSAGES
-    
+
     if args.list:
         count = args.count if args.count > 1 else len(active_messages)
         messages_to_show = active_messages[:count]

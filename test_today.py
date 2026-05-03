@@ -406,3 +406,48 @@ def test_cli_p_short_flag():
     lines = [line.strip() for line in result.stdout.split("\n") if line.strip()]
     assert len(lines) == 2
 
+
+# --- New tests for get_messages_between_dates API ---
+
+def test_get_messages_between_dates():
+    """get_messages_between_dates should return messages for each day in range."""
+    from today import get_messages_between_dates, MESSAGES
+    from datetime import datetime
+    start = datetime(2023, 1, 1)
+    end = datetime(2023, 1, 3)
+    msgs = get_messages_between_dates(start, end)
+    assert len(msgs) == 3
+    for msg in msgs:
+        assert msg in MESSAGES
+    # Deterministic: same range should give same messages
+    msgs2 = get_messages_between_dates(start, end)
+    assert msgs == msgs2
+
+def test_get_messages_between_dates_single_day():
+    """get_messages_between_dates with same start/end should return one message."""
+    from today import get_messages_between_dates
+    from datetime import datetime
+    start = end = datetime(2023, 5, 15)
+    msgs = get_messages_between_dates(start, end)
+    assert len(msgs) == 1
+
+def test_get_messages_between_dates_with_count():
+    """get_messages_between_dates with count should limit results."""
+    from today import get_messages_between_dates
+    from datetime import datetime
+    start = datetime(2023, 1, 1)
+    end = datetime(2023, 1, 10)  # 10 days
+    msgs = get_messages_between_dates(start, end, count=5)
+    assert len(msgs) == 5
+
+def test_get_messages_between_dates_end_before_start():
+    """get_messages_between_dates should raise ValueError if end < start."""
+    from today import get_messages_between_dates
+    from datetime import datetime
+    start = datetime(2023, 1, 10)
+    end = datetime(2023, 1, 1)
+    try:
+        get_messages_between_dates(start, end)
+        assert False, "Should have raised ValueError"
+    except ValueError:
+        pass
