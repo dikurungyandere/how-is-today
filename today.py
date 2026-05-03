@@ -335,13 +335,6 @@ def main():
         print(strip_emoji(msg) if args.strip_emoji else msg)
         return
 
-    if args.weekday is not None:
-        try:
-            msg = get_weekday_message(args.weekday)
-            messages = [msg] * args.count
-        except ValueError as e:
-            print(f"Error: {e}", file=sys.stderr)
-            sys.exit(1)
     if args.next is not None:
         from datetime import timedelta
         if target_date is None:
@@ -358,6 +351,13 @@ def main():
         for i in range(1, args.previous + 1):  # Start from 1 day ago
             day = target_date - timedelta(days=i)
             messages.append(get_daily_message(seed=custom_seed, date=day))
+    elif args.weekday is not None:
+        try:
+            msg = get_weekday_message(args.weekday)
+            messages = [msg] * args.count
+        except ValueError as e:
+            print(f"Error: {e}", file=sys.stderr)
+            sys.exit(1)
     else:
         msg_source = custom_messages if custom_messages is not None else MESSAGES
         if args.random:
