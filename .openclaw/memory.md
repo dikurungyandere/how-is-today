@@ -35,3 +35,4 @@
 - 2026-05-02: Added convenience API functions: get_tomorrow_message(), get_yesterday_message(), get_next_n_messages(n) with tests; fixed test SyntaxWarning.
 - 2026-05-03: Added --previous/-p flag and get_previous_n_messages(n) API for past days; added 8 tests; updated README.
 - 2026-05-03: Fixed --weekday CLI flag being overridden due to incorrect conditional structure; restructured into if/elif/else chain so only one mode executes. Ensures --weekday works correctly with --count, --json, --strip-emoji, and --output.
+- 2026-05-03: Added get_messages_between_dates() API for explicit date ranges; added 4 tests and updated README.
