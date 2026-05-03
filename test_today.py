@@ -451,3 +451,15 @@ def test_get_messages_between_dates_end_before_start():
         assert False, "Should have raised ValueError"
     except ValueError:
         pass
+
+def test_cli_show_date_option():
+    """CLI should support --show-date to prefix messages with dates."""
+    import subprocess
+    import re
+    result = subprocess.run(["python", "today.py", "--next", "2", "--show-date"], capture_output=True, text=True)
+    assert result.returncode == 0
+    lines = [line.strip() for line in result.stdout.split("\n") if line.strip()]
+    assert len(lines) == 2
+    pattern = re.compile(r"\d{4}-\d{2}-\d{2}: ")
+    for line in lines:
+        assert pattern.match(line), f"Line does not start with date: {line}"
