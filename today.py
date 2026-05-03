@@ -14,7 +14,7 @@ __all__ = ["get_daily_message", "get_random_message", "get_message_count",
            "MESSAGES", "VERSION", "strip_emoji",
            "load_messages_from_file", "load_config"]
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional, List
 
 import random
@@ -282,6 +282,7 @@ def main():
     parser.add_argument("-C", "--clear", action="store_true", help="Clear the terminal before output")
     parser.add_argument("-n", "--next", type=int, help="Show messages for the next N days starting from the target date")
     parser.add_argument("-p", "--previous", type=int, help="Show messages for the previous N days ending with yesterday")
+    parser.add_argument("-D", "--show-date", action="store_true", help="Prefix each message with its date (YYYY-MM-DD)")
     args = parser.parse_args()
     if args.clear:
         if os.name == 'nt':
@@ -411,9 +412,32 @@ def main():
         output["generated_at"] = datetime.now().isoformat()
         print(json.dumps(output))
     else:
-        for msg in messages:
-            output_msg = strip_emoji(msg) if args.strip_emoji else msg
-            print(output_msg)
+        if args.show_date:
+            # Build date strings for each message when applicable
+            if args.next is not None:
+                base = target_date if target_date else datetime.now()
+                date_strings = [(base + timedelta(days=i)).strftime("%Y-%m-%d") for i in range(len(messages))]
+            elif args.previous is not None:
+                base = target_date if target_date else datetime.now()
+                date_strings = [(base - timedelta(days=i+1)).strftime("%Y-%m-%d") for i in range(len(messages))]
+            elif not args.random and args.weekday is None:
+                base = target_date if target_date else datetime.now()
+                date_str = base.strftime("%Y-%m-%d")
+                date_strings = [date_str] * len(messages)
+            else:
+                date_strings = None
+            if date_strings:
+                for ds, msg in zip(date_strings, messages):
+                    output_msg = strip_emoji(msg) if args.strip_emoji else msg
+                    print(f"{ds}: {output_msg}")
+            else:
+                for msg in messages:
+                    output_msg = strip_emoji(msg) if args.strip_emoji else msg
+                    print(output_msg)
+        else:
+            for msg in messages:
+                output_msg = strip_emoji(msg) if args.strip_emoji else msg
+                print(output_msg)
 
     if args.verbose and not args.json:
         seed = custom_seed if custom_seed else (target_date.year * 10000 + target_date.month * 100 + target_date.day) if target_date else int(datetime.now().strftime("%Y%m%d"))

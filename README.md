@@ -22,6 +22,8 @@ python today.py --next 7   # Get messages for the next 7 days
 python today.py -d 2025-01-01  # Get message for specific date
 python today.py --json      # Output as JSON
 python today.py -f msgs.txt # Load custom messages from file
+python today.py --show-date --next 3   # Show messages for the next 3 days with dates
+python today.py --show-date -m  # Show today's message with date
 ```
 
 ## Python API
