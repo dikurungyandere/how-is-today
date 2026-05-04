@@ -537,3 +537,19 @@ def test_cli_from_to_date_with_output():
         if os.path.exists(temp_path):
             os.unlink(temp_path)
 
+
+def test_cli_date_option():
+    """CLI should support -d/--date to get message for a specific date."""
+    import subprocess
+    from today import MESSAGES
+    result = subprocess.run(["python", "today.py", "--date", "2023-01-15"], capture_output=True, text=True)
+    assert result.returncode == 0
+    output = result.stdout.strip()
+    assert output in MESSAGES
+
+def test_cli_date_option_invalid():
+    """CLI --date should reject invalid date formats."""
+    import subprocess
+    result = subprocess.run(["python", "today.py", "--date", "2023/01/01"], capture_output=True, text=True)
+    assert result.returncode != 0
+    assert "Invalid date format" in result.stderr
