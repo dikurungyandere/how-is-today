@@ -39,3 +39,4 @@
 - 2026-05-03: Added --show-date/-D flag to prefix messages with date for next/previous/single-date modes.
 - 2026-05-04: Added contains_emoji() utility function, tests, and updated README.
 - 2026-05-04: Added --from-date/--to-date CLI options for explicit date ranges; added 3 tests; updated README usage.
+- 2026-05-04: Added test coverage for --date CLI flag (valid and invalid cases).
