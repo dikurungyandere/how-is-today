@@ -19,6 +19,7 @@ python today.py -i 5        # Get message by index
 python today.py -t         # Get message for tomorrow
 python today.py --previous 3  # Get messages for the previous 3 days
 python today.py --next 7   # Get messages for the next 7 days
+python today.py --from-date 2023-01-01 --to-date 2023-01-10  # Get messages for a date range
 python today.py -d 2025-01-01  # Get message for specific date
 python today.py --json      # Output as JSON
 python today.py -f msgs.txt # Load custom messages from file

@@ -286,6 +286,8 @@ def main():
     parser.add_argument("-C", "--clear", action="store_true", help="Clear the terminal before output")
     parser.add_argument("-n", "--next", type=int, help="Show messages for the next N days starting from the target date")
     parser.add_argument("-p", "--previous", type=int, help="Show messages for the previous N days ending with yesterday")
+    parser.add_argument("--from-date", type=str, help="Start date for range (YYYY-MM-DD), use with --to-date")
+    parser.add_argument("--to-date", type=str, help="End date for range (YYYY-MM-DD), use with --from-date")
     parser.add_argument("-D", "--show-date", action="store_true", help="Prefix each message with its date (YYYY-MM-DD)")
     args = parser.parse_args()
     if args.clear:
@@ -383,6 +385,16 @@ def main():
         for i in range(1, args.previous + 1):  # Start from 1 day ago
             day = target_date - timedelta(days=i)
             messages.append(get_daily_message(seed=custom_seed, date=day))
+    elif args.from_date and args.to_date:
+        try:
+            start_date = datetime.strptime(args.from_date, "%Y-%m-%d")
+            end_date = datetime.strptime(args.to_date, "%Y-%m-%d")
+        except ValueError:
+            print("Error: Invalid date format for --from-date/--to-date. Use YYYY-MM-DD", file=sys.stderr)
+            sys.exit(1)
+        # For explicit date range, use count if provided and > 0, else get all days
+        range_count = args.count if args.count > 1 else None
+        messages = get_messages_between_dates(start_date, end_date, count=range_count)
     elif args.weekday is not None:
         try:
             msg = get_weekday_message(args.weekday)

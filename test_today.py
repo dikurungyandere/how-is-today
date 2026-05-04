@@ -476,3 +476,64 @@ def test_cli_show_date_option():
     pattern = re.compile(r"\d{4}-\d{2}-\d{2}: ")
     for line in lines:
         assert pattern.match(line), f"Line does not start with date: {line}"
+
+def test_cli_from_to_date_range():
+    """CLI should support --from-date and --to-date for explicit date ranges."""
+    import subprocess
+    result = subprocess.run(["python", "today.py", "--from-date", "2023-01-01", "--to-date", "2023-01-03"], capture_output=True, text=True)
+    assert result.returncode == 0
+    lines = [line.strip() for line in result.stdout.split("\n") if line.strip()]
+    assert len(lines) == 3
+
+    # Test with --json
+    result_json = subprocess.run(["python", "today.py", "--from-date", "2023-01-01", "--to-date", "2023-01-02", "--json"], capture_output=True, text=True)
+    assert result_json.returncode == 0
+    import json
+    data = json.loads(result_json.stdout)
+    assert "messages" in data
+    assert len(data["messages"]) == 2
+
+    # Test with --count
+    result_count = subprocess.run(["python", "today.py", "--from-date", "2023-01-01", "--to-date", "2023-01-10", "--count", "3"], capture_output=True, text=True)
+    assert result_count.returncode == 0
+    lines_count = [line.strip() for line in result_count.stdout.split("\n") if line.strip()]
+    assert len(lines_count) == 3
+
+    # Test with --strip-emoji
+    result_noemoji = subprocess.run(["python", "today.py", "--from-date", "2023-01-01", "--to-date", "2023-01-01", "--strip-emoji"], capture_output=True, text=True)
+    assert result_noemoji.returncode == 0
+    assert "🌟" not in result_noemoji.stdout
+
+    # Test invalid date format
+    result_bad = subprocess.run(["python", "today.py", "--from-date", "2023/01/01", "--to-date", "2023-01-03"], capture_output=True, text=True)
+    assert result_bad.returncode != 0
+
+def test_cli_from_to_date_with_show_date():
+    """--from-date/--to-date should work with --show-date."""
+    import subprocess
+    import re
+    result = subprocess.run(["python", "today.py", "--from-date", "2023-01-01", "--to-date", "2023-01-02", "--show-date"], capture_output=True, text=True)
+    assert result.returncode == 0
+    lines = [line.strip() for line in result.stdout.split("\n") if line.strip()]
+    assert len(lines) == 2
+    pattern = re.compile(r"\d{4}-\d{2}-\d{2}: ")
+    for line in lines:
+        assert pattern.match(line)
+
+def test_cli_from_to_date_with_output():
+    """--from-date/--to-date should work with --output."""
+    import subprocess
+    import tempfile
+    import os
+    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.txt') as f:
+        temp_path = f.name
+    try:
+        result = subprocess.run(["python", "today.py", "--from-date", "2023-01-01", "--to-date", "2023-01-02", "-o", temp_path], capture_output=True, text=True)
+        assert result.returncode == 0
+        with open(temp_path, 'r') as f:
+            content = f.read().strip().split("\n")
+        assert len(content) == 2
+    finally:
+        if os.path.exists(temp_path):
+            os.unlink(temp_path)
+
