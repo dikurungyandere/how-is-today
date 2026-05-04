@@ -11,7 +11,7 @@ __all__ = ["get_daily_message", "get_random_message", "get_message_count",
            "get_message_by_index", "get_shuffled_messages", "get_date_seed",
            "get_weekday_message", "get_tomorrow_message", "get_yesterday_message",
            "get_next_n_messages", "get_previous_n_messages", "get_messages_between_dates",
-           "MESSAGES", "VERSION", "strip_emoji",
+           "MESSAGES", "VERSION", "strip_emoji", "contains_emoji",
            "load_messages_from_file", "load_config"]
 
 from datetime import datetime, timedelta
@@ -254,6 +254,10 @@ emoji_pattern = re.compile("["
 def strip_emoji(text: str) -> str:
     """Remove emojis from input text."""
     return emoji_pattern.sub("", text).strip()
+
+def contains_emoji(text: str) -> bool:
+    """Check if the text contains any emoji."""
+    return bool(emoji_pattern.search(text))
 
 VERSION = "1.0.0"
 

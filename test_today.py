@@ -3,7 +3,7 @@
 
 import pytest
 import json
-from today import get_daily_message, get_message_count, MESSAGES, strip_emoji
+from today import get_daily_message, get_message_count, MESSAGES, strip_emoji, contains_emoji
 
 def test_get_daily_message_returns_string():
     """get_daily_message should return a string from MESSAGES."""
@@ -158,6 +158,19 @@ def test_cli_strip_emoji_option():
     assert "✨" not in output
     # Should still contain text
     assert len(output) > 0
+
+def test_contains_emoji():
+    """contains_emoji should detect emojis in text."""
+    # Text with emoji
+    assert contains_emoji("Today is a great day! 🌟")
+    assert contains_emoji("🎉 Party time!")
+    # Text without emoji
+    assert not contains_emoji("Just an ordinary day")
+    assert not contains_emoji("")
+    assert not contains_emoji("12345")
+    # Messages from MESSAGES list all contain emojis
+    for msg in MESSAGES:
+        assert contains_emoji(msg)
 
 def test_cli_output_flag():
     """CLI should support -o/--output to write message to file."""

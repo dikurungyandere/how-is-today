@@ -33,7 +33,7 @@ from today import (get_daily_message, get_random_message, get_message_count,
                    get_message_by_index, get_shuffled_messages, get_date_seed,
                    get_weekday_message, get_tomorrow_message, get_yesterday_message,
                    get_next_n_messages, get_previous_n_messages, get_messages_between_dates,
-                   strip_emoji, load_messages_from_file, load_config)
+                   strip_emoji, contains_emoji, load_messages_from_file, load_config)
 
 # Get a daily message (deterministic by date)
 print(get_daily_message())
@@ -71,6 +71,9 @@ print(get_messages_between_dates(start, end, count=5))  # Limit to 5
 
 # Strip emojis from messages
 print(strip_emoji("Today is great! 🌟"))
+
+# Check if a message contains emoji
+print(contains_emoji("Today is great! 🌟"))  # True
 
 # Load custom messages from file
 custom = load_messages_from_file("my_messages.txt")
