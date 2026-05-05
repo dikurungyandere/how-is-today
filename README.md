@@ -11,20 +11,22 @@ pip install -e .
 ## Usage
 
 ```bash
-python today.py --message    # Show today's message
-python today.py --random    # Show random message
-python today.py --list      # List all messages
-python today.py --list --json  # Output all messages as JSON array
-python today.py -i 5        # Get message by index
-python today.py -t         # Get message for tomorrow
-python today.py --previous 3  # Get messages for the previous 3 days
-python today.py --next 7   # Get messages for the next 7 days
+python today.py --message          # Show today's message
+python today.py --random           # Show random message
+python today.py --list             # List all messages
+python today.py --list --json      # Output all messages as JSON array
+python today.py -i 5               # Get message by index (0-based)
+python today.py -I                 # Get message index for today (numeric identifier)
+python today.py -I --date 2023-05-15  # Get index for specific date
+python today.py -t                # Get message for tomorrow
+python today.py --previous 3      # Get messages for the previous 3 days
+python today.py --next 7          # Get messages for the next 7 days
 python today.py --from-date 2023-01-01 --to-date 2023-01-10  # Get messages for a date range
-python today.py -d 2025-01-01  # Get message for specific date
-python today.py --json      # Output as JSON
-python today.py -f msgs.txt # Load custom messages from file
-python today.py --show-date --next 3   # Show messages for the next 3 days with dates
-python today.py --show-date -m  # Show today's message with date
+python today.py -d 2025-01-01    # Get message for specific date
+python today.py --json           # Output as JSON
+python today.py -f msgs.txt      # Load custom messages from file
+python today.py --show-date --next 3   # Show messages with dates
+python today.py --show-date -m   # Show today's message with date
 ```
 
 ## Python API
@@ -34,10 +36,15 @@ from today import (get_daily_message, get_random_message, get_message_count,
                    get_message_by_index, get_shuffled_messages, get_date_seed,
                    get_weekday_message, get_tomorrow_message, get_yesterday_message,
                    get_next_n_messages, get_previous_n_messages, get_messages_between_dates,
-                   strip_emoji, contains_emoji, load_messages_from_file, load_config)
+                   get_message_index_for_date, strip_emoji, contains_emoji,
+                   load_messages_from_file, load_config)
 
 # Get a daily message (deterministic by date)
 print(get_daily_message())
+
+# Get the numeric index (0–15) for a specific day — useful for stable identifiers
+print(get_message_index_for_date())  # Today's index
+print(get_message_index_for_date(date=datetime(2023, 5, 15)))
 
 # Get a random message (non-deterministic)
 print(get_random_message())
@@ -63,7 +70,7 @@ print(get_yesterday_message())
 print(get_next_n_messages(3))      # Next 3 days starting today
 print(get_previous_n_messages(3))  # Previous 3 days ending yesterday
 
-# NEW: Get messages for an explicit date range
+# Get messages for an explicit date range
 from datetime import datetime
 start = datetime(2023, 1, 1)
 end = datetime(2023, 1, 10)

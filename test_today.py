@@ -538,14 +538,72 @@ def test_cli_from_to_date_with_output():
             os.unlink(temp_path)
 
 
-def test_cli_date_option():
-    """CLI should support -d/--date to get message for a specific date."""
+# --- Tests for get_message_index_for_date and --index-only ---
+
+def test_get_message_index_for_date():
+    """get_message_index_for_date should return a valid index for a given date."""
+    from today import get_message_index_for_date, MESSAGES
+    from datetime import datetime
+    idx = get_message_index_for_date(date=datetime(2023, 5, 15))
+    assert isinstance(idx, int)
+    assert 0 <= idx < len(MESSAGES)
+
+def test_get_message_index_for_date_deterministic():
+    """Same date should return the same index."""
+    from today import get_message_index_for_date
+    from datetime import datetime
+    idx1 = get_message_index_for_date(date=datetime(2023, 1, 1))
+    idx2 = get_message_index_for_date(date=datetime(2023, 1, 1))
+    assert idx1 == idx2
+
+def test_get_message_index_for_date_with_seed():
+    """Explicit seed should determine index deterministically."""
+    from today import get_message_index_for_date
+    idx1 = get_message_index_for_date(seed=12345)
+    idx2 = get_message_index_for_date(seed=12345)
+    assert idx1 == idx2
+
+def test_get_message_index_for_date_none():
+    """Calling with no arguments should return an index for today."""
+    from today import get_message_index_for_date
+    idx = get_message_index_for_date()
+    assert isinstance(idx, int)
+    assert 0 <= idx < len(MESSAGES)
+
+def test_cli_index_only_flag():
+    """CLI should support -I/--index-only to print just the message index."""
     import subprocess
-    from today import MESSAGES
-    result = subprocess.run(["python", "today.py", "--date", "2023-01-15"], capture_output=True, text=True)
+    result = subprocess.run(["python", "today.py", "--index-only"], capture_output=True, text=True)
     assert result.returncode == 0
     output = result.stdout.strip()
-    assert output in MESSAGES
+    assert output.isdigit()
+    idx = int(output)
+    assert 0 <= idx < len(MESSAGES)
+
+def test_cli_index_only_with_date():
+    """--index-only with --date should print index for that date."""
+    import subprocess
+    result = subprocess.run(["python", "today.py", "--index-only", "--date", "2023-05-15"], capture_output=True, text=True)
+    assert result.returncode == 0
+    output = result.stdout.strip()
+    assert output.isdigit()
+    # Deterministic: running again should give same index
+    result2 = subprocess.run(["python", "today.py", "--index-only", "--date", "2023-05-15"], capture_output=True, text=True)
+    assert result2.stdout.strip() == output
+
+def test_cli_index_only_with_seed():
+    """--index-only with --seed should print index for that seed."""
+    import subprocess
+    result = subprocess.run(["python", "today.py", "--index-only", "--seed", "42"], capture_output=True, text=True)
+    assert result.returncode == 0
+    output = result.stdout.strip()
+    assert output.isdigit()
+    idx = int(output)
+    assert 0 <= idx < len(MESSAGES)
+    # Verify same seed gives same index
+    result2 = subprocess.run(["python", "today.py", "--index-only", "--seed", "42"], capture_output=True, text=True)
+    assert result2.stdout.strip() == output
+
 
 def test_cli_date_option_invalid():
     """CLI --date should reject invalid date formats."""

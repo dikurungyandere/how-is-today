@@ -11,8 +11,8 @@ __all__ = ["get_daily_message", "get_random_message", "get_message_count",
            "get_message_by_index", "get_shuffled_messages", "get_date_seed",
            "get_weekday_message", "get_tomorrow_message", "get_yesterday_message",
            "get_next_n_messages", "get_previous_n_messages", "get_messages_between_dates",
-           "MESSAGES", "VERSION", "strip_emoji", "contains_emoji",
-           "load_messages_from_file", "load_config"]
+           "get_message_index_for_date", "MESSAGES", "VERSION", "strip_emoji",
+           "contains_emoji", "load_messages_from_file", "load_config"]
 
 from datetime import datetime, timedelta
 from typing import Optional, List
@@ -242,6 +242,27 @@ def get_messages_between_dates(start_date: datetime, end_date: datetime, count: 
         return messages[:count]
     return messages
 
+def get_message_index_for_date(date: Optional[datetime] = None, seed: Optional[int] = None) -> int:
+    """Get the deterministic message index for a given date.
+
+    This returns the numerical index (0 to len(MESSAGES)-1) that would be selected
+    for the date, without returning the message itself. Useful for integrations
+    that need a stable numeric identifier per day.
+
+    Args:
+        date: Optional date to derive the seed from. If None, uses current date.
+        seed: Optional explicit seed. If provided, overrides date-based seeding.
+
+    Returns:
+        Integer index into the MESSAGES list.
+    """
+    if date is None:
+        date = datetime.now()
+    if seed is None:
+        seed = date.year * 10000 + date.month * 100 + date.day
+    local_random = Random(seed)
+    return local_random.randrange(len(MESSAGES))
+
 # Emoji stripping utility
 emoji_pattern = re.compile("["
                       "\U0001F600-\U0001F64F"
@@ -289,6 +310,7 @@ def main():
     parser.add_argument("--from-date", type=str, help="Start date for range (YYYY-MM-DD), use with --to-date")
     parser.add_argument("--to-date", type=str, help="End date for range (YYYY-MM-DD), use with --from-date")
     parser.add_argument("-D", "--show-date", action="store_true", help="Prefix each message with its date (YYYY-MM-DD)")
+    parser.add_argument("-I", "--index-only", action="store_true", help="Print only the message index (0-based) and exit")
     args = parser.parse_args()
     if args.clear:
         if os.name == 'nt':
@@ -367,6 +389,11 @@ def main():
             print(f"Error: Index {args.index} out of range (0-{len(active_messages)-1})", file=sys.stderr)
             sys.exit(1)
         print(strip_emoji(msg) if args.strip_emoji else msg)
+        return
+
+    if args.index_only:
+        idx = get_message_index_for_date(seed=custom_seed, date=target_date)
+        print(idx)
         return
 
     if args.next is not None:
