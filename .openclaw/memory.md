@@ -1,4 +1,5 @@
 # Memory
+- 2026-05-05: Added get_message_index_for_date() API and --index-only/-I CLI flag. Returns deterministic numeric index (0–15) for a date's message; useful for stable identifiers. Includes 7 new tests and README updates.
 - 2025-04-18: Added get_random_message() utility function and test.
 - 2025-04-19: Added -i/--index CLI option to get message by index + test.
 - 2025-04-19: Added __all__ exports and improved module docstring.
