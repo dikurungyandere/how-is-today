@@ -24,3 +24,8 @@ env/
 # OS
 .DS_Store
 Thumbs.db
+
+# Backup files
+*.bak
+*.backup
+*~
