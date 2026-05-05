@@ -434,7 +434,7 @@ def main():
         if args.random:
             messages = [random.choice(msg_source) for _ in range(args.count)]
         elif args.message or args.count > 1:
-            messages = [get_daily_message(seed=(custom_seed + i) if custom_seed else i, date=target_date) for i in range(args.count)]
+            messages = [get_daily_message(seed=(custom_seed if custom_seed is not None else get_date_seed(target_date)) + i, date=target_date) for i in range(args.count)]
         else:
             messages = [get_daily_message(seed=custom_seed, date=target_date)]
 

@@ -611,3 +611,25 @@ def test_cli_date_option_invalid():
     result = subprocess.run(["python", "today.py", "--date", "2023/01/01"], capture_output=True, text=True)
     assert result.returncode != 0
     assert "Invalid date format" in result.stderr
+
+
+def test_cli_count_multiple_messages_date_specific():
+    """CLI -c N should generate date-specific message sequences."""
+    import subprocess
+    # Same date should give identical output
+    date_str = "2023-05-15"
+    result1 = subprocess.run(["python", "today.py", "-c", "3", "--date", date_str], capture_output=True, text=True)
+    result2 = subprocess.run(["python", "today.py", "-c", "3", "--date", date_str], capture_output=True, text=True)
+    assert result1.returncode == 0
+    assert result2.returncode == 0
+    assert result1.stdout == result2.stdout
+    # Different dates should give different output
+    date_str2 = "2023-05-16"
+    result3 = subprocess.run(["python", "today.py", "-c", "3", "--date", date_str2], capture_output=True, text=True)
+    assert result3.returncode == 0
+    # Ensure we got 3 lines
+    lines1 = result1.stdout.strip().split("\n")
+    lines3 = result3.stdout.strip().split("\n")
+    assert len(lines1) == 3 and len(lines3) == 3
+    # The outputs should differ (probabilistically certain)
+    assert result1.stdout != result3.stdout
