@@ -259,6 +259,30 @@ def test_cli_shuffle_option():
     for line in lines:
         assert line in MESSAGES
 
+def test_cli_random_sample_option():
+    """CLI should support --random-sample/-R to get N unique random messages."""
+    import subprocess
+    from today import MESSAGES
+    n = 5
+    result = subprocess.run(["python", "today.py", "--random-sample", str(n)], capture_output=True, text=True)
+    assert result.returncode == 0
+    lines = [line.strip() for line in result.stdout.split("\n") if line.strip()]
+    assert len(lines) == n
+    # All lines should be from MESSAGES and unique
+    for line in lines:
+        assert line in MESSAGES
+    assert len(set(lines)) == n  # All unique
+
+def test_cli_random_sample_option_error():
+    """CLI --random-sample should error when count exceeds available messages."""
+    import subprocess
+    from today import get_message_count
+    n = get_message_count() + 5
+    result = subprocess.run(["python", "today.py", "--random-sample", str(n)], capture_output=True, text=True)
+    assert result.returncode != 0
+    assert "Error" in result.stderr
+    assert "larger than population" in result.stderr or "exceeds" in result.stderr.lower()
+
 def test_cli_weekday_option():
     """CLI should support --weekday option to get message for a given weekday."""
     import subprocess

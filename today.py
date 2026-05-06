@@ -318,6 +318,7 @@ def main():
     parser.add_argument("-f", "--messages-file", type=str, help="Load custom messages from file (one per line)")
     parser.add_argument("--config", type=str, help="Path to config file (JSON)")
     parser.add_argument("-S", "--shuffle", action="store_true", help="Shuffle messages deterministically")
+    parser.add_argument("-R", "--random-sample", type=int, metavar="N", help="Get N unique random messages (without replacement)")
     parser.add_argument("-w", "--weekday", type=int, help="Get message for a given weekday (0=Monday, 6=Sunday)")
     parser.add_argument("-e", "--strip-emoji", action="store_true", help="Remove emojis from output")
     parser.add_argument("--total", action="store_true", help="Show total number of messages and exit")
@@ -443,6 +444,12 @@ def main():
         try:
             msg = get_weekday_message(args.weekday)
             messages = [msg] * args.count
+        except ValueError as e:
+            print(f"Error: {e}", file=sys.stderr)
+            sys.exit(1)
+    elif args.random_sample is not None:
+        try:
+            messages = get_random_sample(args.random_sample, custom_messages)
         except ValueError as e:
             print(f"Error: {e}", file=sys.stderr)
             sys.exit(1)
