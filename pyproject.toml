@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "how-is-today"
+version = "1.0.0"
+description = "A daily message generator that provides motivational messages for each day."
+authors = [{name = "Yana Rio", email = "dikurungyandere@users.noreply.github.com"}]
+requires-python = ">=3.7"
+dependencies = []
+
+[project.scripts]
+how-is-today = "today:main"
+
+[tool.setuptools]
+py-modules = ["today"]
