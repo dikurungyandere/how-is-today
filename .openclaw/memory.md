@@ -1,4 +1,5 @@
 # Memory
+- 2026-05-06: feat: add --random-sample/-R CLI flag to get N unique random messages without replacement; exposes get_random_sample() API; added 2 tests.
 - 2026-05-06: Added pyproject.toml to enable `pip install -e .` as documented. Defines project metadata, setuptools backend, and `how-is-today` console script entry point.
 - 2026-05-05: Fixed bug: multi-message count (-c/--count) now uses date-based seed (base_seed from target_date) instead of loop index; ensures output varies with date. Also fixed custom_seed=0 handling. Added regression test test_cli_count_multiple_messages_date_specific.
 - 2026-05-05: Added get_message_index_for_date() API and --index-only/-I CLI flag. Returns deterministic numeric index (0–15) for a date's message; useful for stable identifiers. Includes 7 new tests and README updates.
