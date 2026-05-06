@@ -3,7 +3,7 @@
 
 import pytest
 import json
-from today import get_daily_message, get_message_count, MESSAGES, strip_emoji, contains_emoji
+from today import get_daily_message, get_message_count, MESSAGES, strip_emoji, contains_emoji, get_random_sample
 
 def test_get_daily_message_returns_string():
     """get_daily_message should return a string from MESSAGES."""
@@ -199,6 +199,42 @@ def test_cli_output_flag():
     finally:
         if os.path.exists(temp_path):
             os.unlink(temp_path)
+
+# --- Tests for get_random_sample ---
+
+def test_get_random_sample():
+    """get_random_sample should return n unique random messages."""
+    n = 5
+    sample = get_random_sample(n)
+    assert isinstance(sample, list)
+    assert len(sample) == n
+    assert len(set(sample)) == n  # All unique
+    for msg in sample:
+        assert msg in MESSAGES
+
+def test_get_random_sample_zero():
+    """get_random_sample with n=0 should return empty list."""
+    assert get_random_sample(0) == []
+
+def test_get_random_sample_negative():
+    """get_random_sample with negative n should raise ValueError."""
+    import pytest
+    with pytest.raises(ValueError):
+        get_random_sample(-1)
+
+def test_get_random_sample_too_large():
+    """get_random_sample with n > len(MESSAGES) should raise ValueError."""
+    import pytest
+    with pytest.raises(ValueError):
+        get_random_sample(len(MESSAGES) + 1)
+
+def test_get_random_sample_with_custom_messages():
+    """get_random_sample should work with custom message list."""
+    custom = ["A", "B", "C", "D"]
+    sample = get_random_sample(3, messages=custom)
+    assert len(sample) == 3
+    assert set(sample).issubset(set(custom))
+    assert len(set(sample)) == 3  # unique
 def test_cli_total_flag():
     """CLI should support --total to show total number of messages."""
     import subprocess

@@ -44,3 +44,4 @@
 - 2026-05-04: Added contains_emoji() utility function, tests, and updated README.
 - 2026-05-04: Added --from-date/--to-date CLI options for explicit date ranges; added 3 tests; updated README usage.
 - 2026-05-04: Added test coverage for --date CLI flag (valid and invalid cases).
+- 2026-05-06: Added get_random_sample() utility function to retrieve n unique random messages without replacement; extended emoji detection regex to include Supplemental Symbols and Pictographs (U+1F900–U+1F9FF), fixing handshake emoji (🤝) recognition.

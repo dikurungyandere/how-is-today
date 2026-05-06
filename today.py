@@ -7,7 +7,7 @@ Examples:
     python today.py --list    # List all messages
 """
 
-__all__ = ["get_daily_message", "get_random_message", "get_message_count",
+__all__ = ["get_daily_message", "get_random_message", "get_random_sample", "get_message_count",
            "get_message_by_index", "get_shuffled_messages", "get_date_seed",
            "get_weekday_message", "get_tomorrow_message", "get_yesterday_message",
            "get_next_n_messages", "get_previous_n_messages", "get_messages_between_dates",
@@ -87,6 +87,22 @@ def load_config() -> dict:
 def get_random_message() -> str:
     """Return a random message (not seeded by date)."""
     return random.choice(MESSAGES)
+
+def get_random_sample(n: int, messages: Optional[List[str]] = None) -> List[str]:
+    """Return a random sample of n unique messages (without replacement).
+
+    Args:
+        n: Number of unique messages to sample.
+        messages: Optional custom message list to sample from. Defaults to MESSAGES.
+
+    Returns:
+        List of n randomly selected unique messages.
+
+    Raises:
+        ValueError: If n is negative or exceeds the number of available messages.
+    """
+    source = messages if messages is not None else MESSAGES
+    return random.sample(source, n)
 
 def get_daily_message(seed: Optional[int] = None, date: Optional[datetime] = None) -> str:
     """Get a message based on date for consistency."""
@@ -270,6 +286,7 @@ emoji_pattern = re.compile("["
                       "\U0001F680-\U0001F6FF"
                       "\U0001F1E0-\U0001F1FF"
                       "\U00002702-\U000027B0"
+                      "\U0001F900-\U0001F9FF"
                       "\U000024C2-\U0001F251]", re.UNICODE)
 
 def strip_emoji(text: str) -> str:
