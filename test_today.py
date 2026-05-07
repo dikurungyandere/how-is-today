@@ -244,6 +244,17 @@ def test_cli_total_flag():
     expected = str(get_message_count())
     assert result.stdout.strip() == expected
 
+def test_cli_total_json_flag():
+    """CLI should support --total --json for valid JSON output."""
+    import subprocess
+    import json
+    from today import get_message_count
+    result = subprocess.run(["python", "today.py", "--total", "--json"], capture_output=True, text=True)
+    assert result.returncode == 0
+    # Should be valid JSON integer
+    parsed = json.loads(result.stdout)
+    assert parsed == get_message_count()
+
 
 
 def test_cli_shuffle_option():

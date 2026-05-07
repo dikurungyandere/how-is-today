@@ -491,7 +491,10 @@ def main():
         return
 
     if args.total:
-        print(get_message_count())
+        if args.json:
+            print(json.dumps(get_message_count()))
+        else:
+            print(get_message_count())
         return
 
     if args.shuffle:
