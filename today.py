@@ -11,8 +11,8 @@ __all__ = ["get_daily_message", "get_random_message", "get_random_sample", "get_
            "get_message_by_index", "get_shuffled_messages", "get_date_seed",
            "get_weekday_message", "get_tomorrow_message", "get_yesterday_message",
            "get_next_n_messages", "get_previous_n_messages", "get_messages_between_dates",
-           "get_message_index_for_date", "MESSAGES", "VERSION", "strip_emoji",
-           "contains_emoji", "load_messages_from_file", "load_config"]
+           "get_message_index_for_date", "search_messages", "MESSAGES", "VERSION",
+           "strip_emoji", "contains_emoji", "load_messages_from_file", "load_config"]
 
 from datetime import datetime, timedelta
 from typing import Optional, List
@@ -279,6 +279,23 @@ def get_message_index_for_date(date: Optional[datetime] = None, seed: Optional[i
     local_random = Random(seed)
     return local_random.randrange(len(MESSAGES))
 
+def search_messages(query: str, messages: Optional[List[str]] = None, case_sensitive: bool = False) -> List[str]:
+    """Search messages for a substring (text or emoji).
+
+    Args:
+        query: Substring to search for (can be text or emoji).
+        messages: Optional custom message list to search. Defaults to MESSAGES.
+        case_sensitive: If True, match case; otherwise case-insensitive.
+
+    Returns:
+        List of messages containing the query substring.
+    """
+    source = messages if messages is not None else MESSAGES
+    if not case_sensitive:
+        query = query.lower()
+        return [msg for msg in source if query in msg.lower()]
+    return [msg for msg in source if query in msg]
+
 # Emoji stripping utility
 emoji_pattern = re.compile("["
                       "\U0001F600-\U0001F64F"
@@ -319,6 +336,7 @@ def main():
     parser.add_argument("--config", type=str, help="Path to config file (JSON)")
     parser.add_argument("-S", "--shuffle", action="store_true", help="Shuffle messages deterministically")
     parser.add_argument("-R", "--random-sample", type=int, metavar="N", help="Get N unique random messages (without replacement)")
+    parser.add_argument("--search", type=str, metavar="QUERY", help="Search messages containing text or emoji (case-insensitive substring match)")
     parser.add_argument("-w", "--weekday", type=int, help="Get message for a given weekday (0=Monday, 6=Sunday)")
     parser.add_argument("-e", "--strip-emoji", action="store_true", help="Remove emojis from output")
     parser.add_argument("--total", action="store_true", help="Show total number of messages and exit")
@@ -452,6 +470,11 @@ def main():
             messages = get_random_sample(args.random_sample, custom_messages)
         except ValueError as e:
             print(f"Error: {e}", file=sys.stderr)
+            sys.exit(1)
+    elif args.search is not None:
+        messages = search_messages(args.search, custom_messages)
+        if not messages:
+            print(f"No messages found matching '{args.search}'", file=sys.stderr)
             sys.exit(1)
     else:
         msg_source = custom_messages if custom_messages is not None else MESSAGES

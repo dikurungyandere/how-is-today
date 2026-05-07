@@ -283,6 +283,104 @@ def test_cli_random_sample_option_error():
     assert "Error" in result.stderr
     assert "larger than population" in result.stderr or "exceeds" in result.stderr.lower()
 
+def test_search_messages_basic():
+    """search_messages should find messages containing the query substring."""
+    from today import search_messages, MESSAGES
+    # Search for a word that appears in some messages
+    results = search_messages("day")
+    assert isinstance(results, list)
+    assert len(results) > 0
+    for msg in results:
+        assert "day" in msg.lower()
+    # All results should be from MESSAGES
+    for msg in results:
+        assert msg in MESSAGES
+
+def test_search_messages_case_insensitive():
+    """search_messages should be case-insensitive by default."""
+    from today import search_messages
+    results_lower = search_messages("great")
+    results_upper = search_messages("GREAT")
+    assert results_lower == results_upper
+
+def test_search_messages_case_sensitive():
+    """search_messages with case_sensitive=True should match exact case."""
+    from today import search_messages, MESSAGES
+    # Find a message with mixed case text
+    results_sensitive = search_messages("Great", case_sensitive=True)
+    for msg in results_sensitive:
+        assert "Great" in msg  # exact case
+    # Should not match "great" lowercase
+    results_insensitive = search_messages("great", case_sensitive=False)
+    assert len(results_insensitive) >= len(results_sensitive)
+
+def test_search_messages_no_results():
+    """search_messages should return empty list when no matches."""
+    from today import search_messages
+    # Use a nonsense query that won't appear
+    results = search_messages("zzzzzzzzzz")
+    assert results == []
+
+def test_search_messages_with_custom_messages():
+    """search_messages should work with custom message list."""
+    from today import search_messages
+    custom = ["Hello World", "Python is great", "Learn something new", "Hello there"]
+    results = search_messages("Hello", messages=custom)
+    assert len(results) == 2
+    assert "Hello World" in results
+    assert "Hello there" in results
+
+def test_cli_search_option():
+    """CLI should support --search to filter messages by substring."""
+    import subprocess
+    from today import MESSAGES
+    result = subprocess.run(["python", "today.py", "--search", "day"], capture_output=True, text=True)
+    assert result.returncode == 0
+    lines = [line.strip() for line in result.stdout.split("\n") if line.strip()]
+    assert len(lines) > 0
+    for line in lines:
+        assert line in MESSAGES
+        assert "day" in line.lower()
+
+def test_cli_search_with_emoji():
+    """CLI --search should work with emoji queries."""
+    import subprocess
+    result = subprocess.run(["python", "today.py", "--search", "🌟"], capture_output=True, text=True)
+    assert result.returncode == 0
+    lines = [line.strip() for line in result.stdout.split("\n") if line.strip()]
+    assert len(lines) > 0
+    for line in lines:
+        assert "🌟" in line
+
+def test_cli_search_no_results():
+    """CLI --search with no matches should exit non-zero and print error."""
+    import subprocess
+    result = subprocess.run(["python", "today.py", "--search", "zzzzz_nonexistent"], capture_output=True, text=True)
+    assert result.returncode != 0
+    assert "No messages found" in result.stderr
+
+def test_cli_search_with_custom_messages_file():
+    """CLI --search should work with -f/--messages-file."""
+    import subprocess
+    import tempfile
+    import os
+    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.txt') as f:
+        temp_path = f.name
+        f.write("# Custom messages\n")
+        f.write("Hello world\n")
+        f.write("Python coding\n")
+        f.write("Hello again\n")
+    try:
+        result = subprocess.run(["python", "today.py", "-f", temp_path, "--search", "Hello"], capture_output=True, text=True)
+        assert result.returncode == 0
+        lines = [line.strip() for line in result.stdout.split("\n") if line.strip()]
+        assert len(lines) == 2
+        assert "Hello world" in lines
+        assert "Hello again" in lines
+    finally:
+        if os.path.exists(temp_path):
+            os.unlink(temp_path)
+
 def test_cli_weekday_option():
     """CLI should support --weekday option to get message for a given weekday."""
     import subprocess
