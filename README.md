@@ -28,6 +28,8 @@ python today.py -f msgs.txt      # Load custom messages from file
 python today.py --show-date --next 3   # Show messages with dates
 python today.py --show-date -m   # Show today's message with date
 python today.py --search <query> # Search messages containing text or emoji
+python today.py --stats          # Show statistics about messages (count, lengths, emoji info)
+python today.py --total          # Show total number of messages
 ```
 
 ## Python API
@@ -37,8 +39,8 @@ from today import (get_daily_message, get_random_message, get_message_count,
                    get_message_by_index, get_shuffled_messages, get_date_seed,
                    get_weekday_message, get_tomorrow_message, get_yesterday_message,
                    get_next_n_messages, get_previous_n_messages, get_messages_between_dates,
-                   get_message_index_for_date, search_messages, strip_emoji, contains_emoji,
-                   load_messages_from_file, load_config)
+                   get_message_index_for_date, search_messages, get_messages_statistics,
+                   strip_emoji, contains_emoji, load_messages_from_file, load_config)
 
 # Get a daily message (deterministic by date)
 print(get_daily_message())
@@ -82,6 +84,13 @@ print(get_messages_between_dates(start, end, count=5))  # Limit to 5
 search_messages("day")  # All messages containing "day"
 search_messages("🌟")     # All messages with star emoji
 search_messages("Great", case_sensitive=True)
+
+# Get statistics about messages
+from today import get_messages_statistics
+stats = get_messages_statistics()
+print(f"Total: {stats['total']}")
+print(f"Unique emojis: {len(stats['unique_emojis'])}")
+print(f"Total emoji count: {stats['total_emojis']}")
 
 # Strip emojis from messages
 print(strip_emoji("Today is great! 🌟"))

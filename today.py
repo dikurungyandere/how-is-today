@@ -11,7 +11,7 @@ __all__ = ["get_daily_message", "get_random_message", "get_random_sample", "get_
            "get_message_by_index", "get_shuffled_messages", "get_date_seed",
            "get_weekday_message", "get_tomorrow_message", "get_yesterday_message",
            "get_next_n_messages", "get_previous_n_messages", "get_messages_between_dates",
-           "get_message_index_for_date", "search_messages", "MESSAGES", "VERSION",
+           "get_message_index_for_date", "search_messages", "get_messages_statistics", "MESSAGES", "VERSION",
            "strip_emoji", "contains_emoji", "load_messages_from_file", "load_config"]
 
 from datetime import datetime, timedelta
@@ -314,6 +314,54 @@ def contains_emoji(text: str) -> bool:
     """Check if the text contains any emoji."""
     return bool(emoji_pattern.search(text))
 
+def get_messages_statistics(messages: Optional[List[str]] = None) -> dict:
+    """Compute statistics for a list of messages.
+
+    Args:
+        messages: Optional custom message list. Defaults to MESSAGES.
+
+    Returns:
+        A dictionary with keys:
+            - total: total message count
+            - average_length: average character length (including emojis)
+            - average_length_no_emoji: average length after stripping emojis
+            - total_emojis: total emoji occurrences across all messages
+            - unique_emojis: list of unique emoji characters found
+            - emoji_counts: dict mapping each emoji to its count
+            - messages_with_emoji: count of messages containing at least one emoji
+            - messages_without_emoji: count of messages with no emojis
+    """
+    source = messages if messages is not None else MESSAGES
+    total = len(source)
+    total_chars = sum(len(msg) for msg in source)
+    total_chars_no_emoji = sum(len(strip_emoji(msg)) for msg in source)
+
+    emoji_counts = {}
+    messages_with_emoji = 0
+    messages_without_emoji = 0
+
+    for msg in source:
+        found = emoji_pattern.findall(msg)
+        if found:
+            messages_with_emoji += 1
+            for e in found:
+                emoji_counts[e] = emoji_counts.get(e, 0) + 1
+        else:
+            messages_without_emoji += 1
+
+    unique_emojis = list(emoji_counts.keys())
+
+    return {
+        "total": total,
+        "average_length": round(total_chars / total, 2) if total else 0,
+        "average_length_no_emoji": round(total_chars_no_emoji / total, 2) if total else 0,
+        "total_emojis": sum(emoji_counts.values()),
+        "unique_emojis": unique_emojis,
+        "emoji_counts": emoji_counts,
+        "messages_with_emoji": messages_with_emoji,
+        "messages_without_emoji": messages_without_emoji,
+    }
+
 VERSION = "1.0.0"
 
 def main():
@@ -337,6 +385,7 @@ def main():
     parser.add_argument("-S", "--shuffle", action="store_true", help="Shuffle messages deterministically")
     parser.add_argument("-R", "--random-sample", type=int, metavar="N", help="Get N unique random messages (without replacement)")
     parser.add_argument("--search", type=str, metavar="QUERY", help="Search messages containing text or emoji (case-insensitive substring match)")
+    parser.add_argument("--stats", action="store_true", help="Show statistics about the messages (count, lengths, emoji info)")
     parser.add_argument("-w", "--weekday", type=int, help="Get message for a given weekday (0=Monday, 6=Sunday)")
     parser.add_argument("-e", "--strip-emoji", action="store_true", help="Remove emojis from output")
     parser.add_argument("--total", action="store_true", help="Show total number of messages and exit")
@@ -377,6 +426,38 @@ def main():
             sys.exit(1)
 
     active_messages = custom_messages if custom_messages is not None else MESSAGES
+
+    if args.stats:
+        stats = get_messages_statistics(active_messages)
+        # Output handling: respects --output/-o and --quiet/-q
+        if args.output:
+            output_str = json.dumps(stats, indent=2) if args.json else (
+                f"Total messages: {stats['total']}\n"
+                f"Average length: {stats['average_length']} chars (with emojis), {stats['average_length_no_emoji']} chars (without emojis)\n"
+                f"Messages with emoji: {stats['messages_with_emoji']}\n"
+                f"Messages without emoji: {stats['messages_without_emoji']}\n"
+                f"Total emoji occurrences: {stats['total_emojis']}\n"
+                f"Unique emojis: {len(stats['unique_emojis'])} {''.join(stats['unique_emojis'])}\n"
+            )
+            with open(args.output, "w") as f:
+                f.write(output_str)
+            if not args.quiet:
+                print(f"Saved to {args.output}", file=sys.stderr)
+        elif not args.quiet:
+            if args.json:
+                print(json.dumps(stats, indent=2))
+            else:
+                print(f"Total messages: {stats['total']}")
+                print(f"Average length: {stats['average_length']} chars (with emojis), {stats['average_length_no_emoji']} chars (without emojis)")
+                print(f"Messages with emoji: {stats['messages_with_emoji']}")
+                print(f"Messages without emoji: {stats['messages_without_emoji']}")
+                print(f"Total emoji occurrences: {stats['total_emojis']}")
+                print(f"Unique emojis: {len(stats['unique_emojis'])} {''.join(stats['unique_emojis'])}")
+                if args.verbose:
+                    print("Emoji counts:")
+                    for emoji, count in sorted(stats['emoji_counts'].items(), key=lambda x: (-x[1], x[0])):
+                        print(f"  {emoji}: {count}")
+        return
 
     if args.list:
         count = args.count if args.count > 1 else len(active_messages)

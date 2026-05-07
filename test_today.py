@@ -791,3 +791,114 @@ def test_cli_count_multiple_messages_date_specific():
     assert len(lines1) == 3 and len(lines3) == 3
     # The outputs should differ (probabilistically certain)
     assert result1.stdout != result3.stdout
+
+# --- Tests for get_messages_statistics and --stats flag ---
+
+def test_get_messages_statistics():
+    """get_messages_statistics should return a dict with required keys."""
+    from today import get_messages_statistics, MESSAGES
+    stats = get_messages_statistics()
+    assert isinstance(stats, dict)
+    required_keys = {"total", "average_length", "average_length_no_emoji", "total_emojis",
+                     "unique_emojis", "emoji_counts", "messages_with_emoji", "messages_without_emoji"}
+    assert required_keys.issubset(stats.keys())
+    assert stats["total"] == len(MESSAGES)
+    assert stats["total_emojis"] >= stats["messages_with_emoji"]  # At least one emoji per message with emoji
+    assert stats["messages_with_emoji"] + stats["messages_without_emoji"] == stats["total"]
+
+def test_get_messages_statistics_custom():
+    """get_messages_statistics should work with custom message list."""
+    from today import get_messages_statistics
+    custom = ["Hello!", "No emoji here", "With emoji 😀", "Another 😎😎"]
+    stats = get_messages_statistics(custom)
+    assert stats["total"] == 4
+    assert stats["total_emojis"] == 3  # 😀 + 😎 + 😎
+    assert stats["messages_with_emoji"] == 2
+    assert stats["messages_without_emoji"] == 2
+    assert stats["unique_emojis"] == ["😀", "😎"] or set(stats["unique_emojis"]) == {"😀", "😎"}
+
+def test_get_messages_statistics_empty():
+    """get_messages_statistics with empty list should return zeroed stats."""
+    from today import get_messages_statistics
+    stats = get_messages_statistics([])
+    assert stats["total"] == 0
+    assert stats["average_length"] == 0
+    assert stats["average_length_no_emoji"] == 0
+    assert stats["total_emojis"] == 0
+    assert stats["unique_emojis"] == []
+    assert stats["emoji_counts"] == {}
+    assert stats["messages_with_emoji"] == 0
+    assert stats["messages_without_emoji"] == 0
+
+def test_cli_stats_flag():
+    """CLI should support --stats to show message statistics."""
+    import subprocess
+    result = subprocess.run(["python", "today.py", "--stats"], capture_output=True, text=True)
+    assert result.returncode == 0
+    output = result.stdout
+    assert "Total messages:" in output
+    assert "Average length:" in output
+    assert "Messages with emoji:" in output
+    assert "Total emoji occurrences:" in output
+    assert "Unique emojis:" in output
+
+def test_cli_stats_json():
+    """CLI --stats with --json should output valid JSON statistics."""
+    import subprocess
+    import json
+    result = subprocess.run(["python", "today.py", "--stats", "--json"], capture_output=True, text=True)
+    assert result.returncode == 0
+    stats = json.loads(result.stdout)
+    assert "total" in stats
+    assert "average_length" in stats
+    assert "total_emojis" in stats
+    assert "unique_emojis" in stats
+    assert "emoji_counts" in stats
+
+def test_cli_stats_with_custom_messages_file():
+    """CLI --stats should work with -f/--messages-file."""
+    import subprocess
+    import tempfile
+    import os
+    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.txt') as f:
+        temp_path = f.name
+        f.write("Custom one\n")
+        f.write("Custom two with emoji 😀\n")
+        f.write("Custom three\n")
+    try:
+        result = subprocess.run(["python", "today.py", "--stats", "-f", temp_path], capture_output=True, text=True)
+        assert result.returncode == 0
+        assert "Total messages: 3" in result.stdout
+        assert "Messages with emoji: 1" in result.stdout
+        assert "Total emoji occurrences: 1" in result.stdout
+    finally:
+        if os.path.exists(temp_path):
+            os.unlink(temp_path)
+
+def test_cli_stats_verbose():
+    """CLI --stats --verbose should show per-emoji breakdown."""
+    import subprocess
+    result = subprocess.run(["python", "today.py", "--stats", "--verbose"], capture_output=True, text=True)
+    assert result.returncode == 0
+    output = result.stdout
+    assert "Emoji counts:" in output
+    # Should list individual emojis with counts
+    assert "🌟:" in output or "💪:" in output or "✨:" in output  # at least one emoji listed
+
+def test_cli_stats_with_output_to_file():
+    """CLI --stats with -o should write statistics to file."""
+    import subprocess
+    import tempfile
+    import os
+    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.txt') as f:
+        temp_path = f.name
+    try:
+        result = subprocess.run(["python", "today.py", "--stats", "-o", temp_path, "-q"], capture_output=True, text=True)
+        assert result.returncode == 0
+        assert result.stdout == ""
+        with open(temp_path, 'r') as f:
+            content = f.read()
+        assert "Total messages:" in content
+    finally:
+        if os.path.exists(temp_path):
+            os.unlink(temp_path)
