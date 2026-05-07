@@ -1,48 +1,5 @@
 # Memory
-- 2026-05-06: feat: add --random-sample/-R CLI flag to get N unique random messages without replacement; exposes get_random_sample() API; added 2 tests.
-- 2026-05-06: Added pyproject.toml to enable `pip install -e .` as documented. Defines project metadata, setuptools backend, and `how-is-today` console script entry point.
-- 2026-05-05: Fixed bug: multi-message count (-c/--count) now uses date-based seed (base_seed from target_date) instead of loop index; ensures output varies with date. Also fixed custom_seed=0 handling. Added regression test test_cli_count_multiple_messages_date_specific.
-- 2026-05-05: Added get_message_index_for_date() API and --index-only/-I CLI flag. Returns deterministic numeric index (0–15) for a date's message; useful for stable identifiers. Includes 7 new tests and README updates.
-- 2026-05-05: Cleaned up repository: removed .backup and .bak files from git tracking, updated .gitignore to exclude backup patterns, and pushed cleanup commit.
-- 2025-04-18: Added get_random_message() utility function and test.
-- 2025-04-19: Added -i/--index CLI option to get message by index + test.
-- 2025-04-19: Added __all__ exports and improved module docstring.
-- 2025-04-20: Added -t/--tomorrow flag to get message for next day.
-- 2025-04-20: Fixed get_daily_message to use local Random - avoids corrupting global random state.
-- 2025-04-21: Added --messages-file/-f option to load custom messages from file.
-- 2025-04-21: Improved README with usage examples, installation instructions, and Python API docs.
-- 2025-04-22: Added config file support (load_config, --config CLI option)
-- 2025-04-23: Added --shuffle/-S option for deterministic message shuffling
-- 2025-04-23: Added tests for get_shuffled_messages (basic + count limit)
-- 2025-04-24: Added --strip-emoji/-e option to remove emojis from output
-- 2025-04-25: Added test for CLI --strip-emoji option
-- 2026-04-23: Added test for --version CLI option
-- 2026-04-24: Added test for --list --count CLI option
-- 2026-04-24: Refactored emoji stripping to module level, fixed MESSAGES syntax error
-- 2026-04-26: Added strip_emoji function to public API and test CLI --strip-emoji option
-- 2026-04-26: Improved test_strip_emoji function with comprehensive edge cases
-- 2026-04-26: Added test for load_config loading from file
-- 2026-04-27: Added test for CLI output flag functionality
-- 2026-04-27: Exported load_messages_from_file and load_config functions in __all__
-- 2026-04-27: Improved load_messages_from_file to ignore empty lines and comments, updated test.
-- 2026-04-28: Add --total flag to show total number of messages and exit
-- 2026-04-28: Added -y/--yesterday flag to get message for previous day
-- 2026-04-28: Added test for CLI --total flag to show total number of messages
-- 2026-04-29: Improved docstring for get_shuffled_messages function with detailed parameter and return descriptions
-- 2026-04-29: Added test for CLI --shuffle option
-- 2026-04-29: Added get_date_seed utility function for deterministic date-based seeding + test
-- 2026-04-30: Added --clear/-C option to clear terminal before output
-- 2026-04-30: Improved docstring for get_shuffled_messages function
-- 2026-04-30: Fix load_messages_from_file to specify UTF-8 encoding for proper Unicode handling
-- 2026-05-01: Added get_weekday_message function and CLI option to get message for a given weekday (0=Monday, 6=Sunday)
-- 2026-05-01: Added --json support for --list to output messages as JSON array.
-- 2026-05-02: Added --next/-n flag to show messages for the next N consecutive days; fixed --weekday flow bug; added tests.
-- 2026-05-02: Added convenience API functions: get_tomorrow_message(), get_yesterday_message(), get_next_n_messages(n) with tests; fixed test SyntaxWarning.
-- 2026-05-03: Added --previous/-p flag and get_previous_n_messages(n) API for past days; added 8 tests; updated README.
-- 2026-05-03: Fixed --weekday CLI flag being overridden due to incorrect conditional structure; restructured into if/elif/else chain so only one mode executes. Ensures --weekday works correctly with --count, --json, --strip-emoji, and --output.
-- 2026-05-03: Added get_messages_between_dates() API for explicit date ranges; added 4 tests and updated README.
-- 2026-05-03: Added --show-date/-D flag to prefix messages with date for next/previous/single-date modes.
-- 2026-05-04: Added contains_emoji() utility function, tests, and updated README.
-- 2026-05-04: Added --from-date/--to-date CLI options for explicit date ranges; added 3 tests; updated README usage.
-- 2026-05-04: Added test coverage for --date CLI flag (valid and invalid cases).
-- 2026-05-06: Added get_random_sample() utility function to retrieve n unique random messages without replacement; extended emoji detection regex to include Supplemental Symbols and Pictographs (U+1F900–U+1F9FF), fixing handshake emoji (🤝) recognition.
+- 2026-05-07: feat: add search_messages() API and --search CLI flag to filter messages by text/emoji substring; added 8 tests; updated README.
+- 2026-05-06: Added --random-sample/-R, get_random_sample() API; fixed emoji regex for U+1F900–U+1F9FF; added pyproject.toml.
+- 2026-05-05: Added get_message_index_for_date() and --index-only/-I; fixed multi-message count seeding; cleaned repo.
+- 2025-04: Ongoing: Added many utilities and CLI flags: get_random_message, -i/--index, -t/--tomorrow, --messages-file, config, --shuffle, --strip-emoji, --total, -y/--yesterday, get_weekday_message, --next/-n, --previous/-p, get_messages_between_dates, --show-date, contains_emoji, --from-date/--to-date, get_date_seed, --clear; plus extensive tests and README updates. Also fixed local Random usage and UTF-8 encoding.
