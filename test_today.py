@@ -932,3 +932,26 @@ def test_cli_stats_with_output_to_file():
     finally:
         if os.path.exists(temp_path):
             os.unlink(temp_path)
+
+def test_cli_index_only_with_custom_messages_file():
+    """CLI --index-only should work with -f/--messages-file."""
+    import subprocess
+    import tempfile
+    import os
+    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.txt') as f:
+        temp_path = f.name
+        f.write("Custom one\n")
+        f.write("Custom two\n")
+        f.write("Custom three\n")
+    try:
+        result = subprocess.run(["python", "today.py", "--index-only", "-f", temp_path], capture_output=True, text=True)
+        assert result.returncode == 0
+        output = result.stdout.strip()
+        assert output.isdigit()
+        idx = int(output)
+        assert 0 <= idx <= 2
+        result2 = subprocess.run(["python", "today.py", "--index-only", "-f", temp_path], capture_output=True, text=True)
+        assert result2.stdout.strip() == output
+    finally:
+        if os.path.exists(temp_path):
+            os.unlink(temp_path)
