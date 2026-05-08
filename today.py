@@ -380,6 +380,7 @@ def main():
     parser.add_argument("-v", "--verbose", action="store_true", help="Show extra info (seed, date)")
     parser.add_argument("-s", "--seed", type=int, help="Custom seed for message (overrides date-based seeding)")
     parser.add_argument("-i", "--index", type=int, help="Get message by index (0-based)")
+    parser.add_argument("--first", action="store_true", help="Get the first message (index 0)")
     parser.add_argument("-f", "--messages-file", type=str, help="Load custom messages from file (one per line)")
     parser.add_argument("--config", type=str, help="Path to config file (JSON)")
     parser.add_argument("-S", "--shuffle", action="store_true", help="Shuffle messages deterministically")
@@ -508,6 +509,11 @@ def main():
         if msg is None:
             print(f"Error: Index {args.index} out of range (0-{len(active_messages)-1})", file=sys.stderr)
             sys.exit(1)
+        print(strip_emoji(msg) if args.strip_emoji else msg)
+        return
+
+    if args.first:
+        msg = get_message_by_index(0, custom_messages)
         print(strip_emoji(msg) if args.strip_emoji else msg)
         return
 

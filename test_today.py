@@ -52,6 +52,16 @@ def test_cli_index_option():
     assert result.returncode == 0
     assert result.stdout.strip() == MESSAGES[0]
 
+def test_cli_first_option():
+    """CLI should support --first to get the first message."""
+    import subprocess
+    result = subprocess.run(["python", "today.py", "--first"], capture_output=True, text=True)
+    assert result.returncode == 0
+    assert result.stdout.strip() == MESSAGES[0]
+    # Should be same as index 0
+    result_idx = subprocess.run(["python", "today.py", "-i", "0"], capture_output=True, text=True)
+    assert result.stdout.strip() == result_idx.stdout.strip()
+
 def test_cli_import():
     """CLI module should be importable without errors."""
     import importlib.util
