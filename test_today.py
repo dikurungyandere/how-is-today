@@ -62,6 +62,15 @@ def test_cli_first_option():
     result_idx = subprocess.run(["python", "today.py", "-i", "0"], capture_output=True, text=True)
     assert result.stdout.strip() == result_idx.stdout.strip()
 
+def test_cli_last_option():
+    """CLI should support --last to get the last message."""
+    import subprocess
+    result = subprocess.run(["python", "today.py", "--last"], capture_output=True, text=True)
+    assert result.returncode == 0
+    assert result.stdout.strip() == MESSAGES[-1]
+    result_idx = subprocess.run(["python", "today.py", "-i", str(len(MESSAGES)-1)], capture_output=True, text=True)
+    assert result.stdout.strip() == result_idx.stdout.strip()
+
 def test_cli_import():
     """CLI module should be importable without errors."""
     import importlib.util

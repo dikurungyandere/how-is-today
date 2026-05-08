@@ -381,6 +381,7 @@ def main():
     parser.add_argument("-s", "--seed", type=int, help="Custom seed for message (overrides date-based seeding)")
     parser.add_argument("-i", "--index", type=int, help="Get message by index (0-based)")
     parser.add_argument("--first", action="store_true", help="Get the first message (index 0)")
+    parser.add_argument("--last", action="store_true", help="Get the last message (last index)")
     parser.add_argument("-f", "--messages-file", type=str, help="Load custom messages from file (one per line)")
     parser.add_argument("--config", type=str, help="Path to config file (JSON)")
     parser.add_argument("-S", "--shuffle", action="store_true", help="Shuffle messages deterministically")
@@ -514,6 +515,11 @@ def main():
 
     if args.first:
         msg = get_message_by_index(0, custom_messages)
+        print(strip_emoji(msg) if args.strip_emoji else msg)
+        return
+
+    if args.last:
+        msg = get_message_by_index(len(active_messages) - 1, custom_messages)
         print(strip_emoji(msg) if args.strip_emoji else msg)
         return
 
