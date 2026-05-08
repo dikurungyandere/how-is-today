@@ -1,5 +1,6 @@
 # Memory
 - 2026-05-07: feat: add --first flag to get the first message (index 0); added test_cli_first_option.
+- 2026-05-08: feat: add --last flag to get the last message (complement to --first); added test_cli_last_option.
 - 2026-05-07: feat: add get_messages_statistics() utility and --stats CLI flag for message analysis (total, average lengths, emoji counts, unique emojis); added 8 tests; updated README.
 - 2026-05-07: feat: add search_messages() API and --search CLI flag to filter messages by text/emoji substring; added 8 tests; updated README.
 - 2026-05-06: Added --random-sample/-R, get_random_sample() API; fixed emoji regex for U+1F900–U+1F9FF; added pyproject.toml.
