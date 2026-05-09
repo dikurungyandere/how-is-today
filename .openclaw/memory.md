@@ -1,4 +1,5 @@
 # Memory
+- 2026-05-09: feat: add --yesterday-weekday and --tomorrow-weekday CLI flags; updated README.
 - 2026-05-09: feat: add --today-weekday flag to show message for current weekday; added test_cli_today_weekday_option.
 - 2026-05-07: feat: add --first flag to get the first message (index 0); added test_cli_first_option.
 - 2026-05-08: feat: add --last flag to get the last message (complement to --first); added test_cli_last_option.
