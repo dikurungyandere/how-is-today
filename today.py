@@ -390,6 +390,8 @@ def main():
     parser.add_argument("--stats", action="store_true", help="Show statistics about the messages (count, lengths, emoji info)")
     parser.add_argument("-w", "--weekday", type=int, help="Get message for a given weekday (0=Monday, 6=Sunday)")
     parser.add_argument("--today-weekday", action="store_true", help="Show today's weekday message (deterministic by current weekday)")
+    parser.add_argument("--yesterday-weekday", action="store_true", help="Show yesterday's weekday message (based on yesterday's day of week)")
+    parser.add_argument("--tomorrow-weekday", action="store_true", help="Show tomorrow's weekday message (based on tomorrow's day of week)")
     parser.add_argument("-e", "--strip-emoji", action="store_true", help="Remove emojis from output")
     parser.add_argument("--total", action="store_true", help="Show total number of messages and exit")
     parser.add_argument("-C", "--clear", action="store_true", help="Clear the terminal before output")
@@ -565,6 +567,24 @@ def main():
     elif args.today_weekday:
         try:
             weekday = datetime.now().weekday()
+            msg = get_weekday_message(weekday)
+            messages = [msg] * args.count
+        except ValueError as e:
+            print(f"Error: {e}", file=sys.stderr)
+            sys.exit(1)
+    elif args.yesterday_weekday:
+        try:
+            from datetime import timedelta
+            weekday = (datetime.now() - timedelta(days=1)).weekday()
+            msg = get_weekday_message(weekday)
+            messages = [msg] * args.count
+        except ValueError as e:
+            print(f"Error: {e}", file=sys.stderr)
+            sys.exit(1)
+    elif args.tomorrow_weekday:
+        try:
+            from datetime import timedelta
+            weekday = (datetime.now() + timedelta(days=1)).weekday()
             msg = get_weekday_message(weekday)
             messages = [msg] * args.count
         except ValueError as e:
