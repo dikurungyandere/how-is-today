@@ -374,6 +374,7 @@ def main():
     parser.add_argument("-y", "--yesterday", action="store_true", help="Get message for yesterday")
     parser.add_argument("-j", "--json", action="store_true", help="Output as JSON")
     parser.add_argument("-l", "--list", action="store_true", help="List all available messages")
+    parser.add_argument("--plain", action="store_true", help="With --list, output messages one per line without numbering")
     parser.add_argument("-o", "--output", type=str, help="Save message to file")
     parser.add_argument("--version", action="store_true", help="Show version")
     parser.add_argument("-q", "--quiet", action="store_true", help="Suppress output (use with -o/--output)")
@@ -470,8 +471,12 @@ def main():
         if args.json:
             print(json.dumps(messages_to_show))
         else:
-            for i, msg in enumerate(messages_to_show, 1):
-                print(f"{i}. {msg}")
+            if args.plain:
+                for msg in messages_to_show:
+                    print(msg)
+            else:
+                for i, msg in enumerate(messages_to_show, 1):
+                    print(f"{i}. {msg}")
         return
 
     # Parse date and seed for message generation
