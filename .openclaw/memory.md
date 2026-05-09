@@ -1,4 +1,5 @@
 # Memory
+- 2026-05-09: feat: add --today-weekday flag to show message for current weekday; added test_cli_today_weekday_option.
 - 2026-05-07: feat: add --first flag to get the first message (index 0); added test_cli_first_option.
 - 2026-05-08: feat: add --last flag to get the last message (complement to --first); added test_cli_last_option.
 - 2026-05-07: feat: add get_messages_statistics() utility and --stats CLI flag for message analysis (total, average lengths, emoji counts, unique emojis); added 8 tests; updated README.
