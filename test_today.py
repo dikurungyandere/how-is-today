@@ -429,6 +429,23 @@ def test_cli_weekday_option():
     assert lines[0] == lines[1] == get_weekday_message(0)
 
 
+def test_cli_today_weekday_option():
+    """CLI should support --today-weekday to show message for current weekday."""
+    import subprocess
+    from today import get_weekday_message
+    from datetime import datetime
+    expected = get_weekday_message(datetime.now().weekday())
+    result = subprocess.run(["python", "today.py", "--today-weekday"], capture_output=True, text=True)
+    assert result.returncode == 0
+    assert result.stdout.strip() == expected
+    # Test with count
+    result2 = subprocess.run(["python", "today.py", "--today-weekday", "--count", "3"], capture_output=True, text=True)
+    assert result2.returncode == 0
+    lines = [line.strip() for line in result2.stdout.split("\n") if line.strip()]
+    assert len(lines) == 3
+    assert all(line == expected for line in lines)
+
+
 def test_get_date_seed():
     """get_date_seed should return correct seed based on date."""
     from today import get_date_seed

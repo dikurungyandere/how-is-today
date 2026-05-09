@@ -389,6 +389,7 @@ def main():
     parser.add_argument("--search", type=str, metavar="QUERY", help="Search messages containing text or emoji (case-insensitive substring match)")
     parser.add_argument("--stats", action="store_true", help="Show statistics about the messages (count, lengths, emoji info)")
     parser.add_argument("-w", "--weekday", type=int, help="Get message for a given weekday (0=Monday, 6=Sunday)")
+    parser.add_argument("--today-weekday", action="store_true", help="Show today's weekday message (deterministic by current weekday)")
     parser.add_argument("-e", "--strip-emoji", action="store_true", help="Remove emojis from output")
     parser.add_argument("--total", action="store_true", help="Show total number of messages and exit")
     parser.add_argument("-C", "--clear", action="store_true", help="Clear the terminal before output")
@@ -557,6 +558,14 @@ def main():
     elif args.weekday is not None:
         try:
             msg = get_weekday_message(args.weekday)
+            messages = [msg] * args.count
+        except ValueError as e:
+            print(f"Error: {e}", file=sys.stderr)
+            sys.exit(1)
+    elif args.today_weekday:
+        try:
+            weekday = datetime.now().weekday()
+            msg = get_weekday_message(weekday)
             messages = [msg] * args.count
         except ValueError as e:
             print(f"Error: {e}", file=sys.stderr)
