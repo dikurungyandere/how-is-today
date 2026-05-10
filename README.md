@@ -21,6 +21,7 @@ python today.py -I --date 2023-05-15  # Get index for specific date
 python today.py -t                # Get message for tomorrow
 python today.py --yesterday-weekday   # Get yesterday's weekday message
 python today.py --tomorrow-weekday    # Get tomorrow's weekday message
+python today.py --this-week           # Show all 7 weekday messages for the current week (Mon–Sun)
 python today.py --previous 3      # Get messages for the previous 3 days
 python today.py --next 7          # Get messages for the next 7 days
 python today.py --from-date 2023-01-01 --to-date 2023-01-10  # Get messages for a date range
@@ -67,6 +68,12 @@ print(get_shuffled_messages(seed=42, count=5))
 
 # Get message for a specific weekday (0=Monday, 6=Sunday)
 print(get_weekday_message(0))  # Monday's message
+
+# Get all weekday messages for the current week (Monday through Sunday)
+print(get_week_messages())  # Returns list of 7 messages
+# Or for a specific week starting on a given Monday date:
+from datetime import datetime
+print(get_week_messages(start_monday=datetime(2023, 5, 1)))
 
 # Get messages for relative dates
 print(get_tomorrow_message())

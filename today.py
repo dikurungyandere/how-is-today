@@ -9,7 +9,7 @@ Examples:
 
 __all__ = ["get_daily_message", "get_random_message", "get_random_sample", "get_message_count",
            "get_message_by_index", "get_shuffled_messages", "get_date_seed",
-           "get_weekday_message", "get_tomorrow_message", "get_yesterday_message",
+           "get_weekday_message", "get_week_messages", "get_tomorrow_message", "get_yesterday_message",
            "get_next_n_messages", "get_previous_n_messages", "get_messages_between_dates",
            "get_message_index_for_date", "search_messages", "get_messages_statistics", "MESSAGES", "VERSION",
            "strip_emoji", "contains_emoji", "count_emojis", "load_messages_from_file", "load_config"]
@@ -169,6 +169,27 @@ def get_weekday_message(weekday: int) -> str:
     # Use a seed that is unique for each weekday and unlikely to conflict with date-based seeds.
     seed = 10000 + weekday  # 10000 to 10006
     return get_daily_message(seed=seed)
+
+def get_week_messages(start_monday: Optional[datetime] = None) -> List[str]:
+    """Get all 7 weekday messages for the week containing the given Monday.
+
+    Returns messages in week order (Monday through Sunday). If no Monday is
+    provided, uses the current week (starting from this week's Monday).
+
+    Args:
+        start_monday: Optional Monday date that starts the week. If None, uses
+            the current week's Monday (determined from today's date).
+
+    Returns:
+        List of 7 messages, one for each weekday Mon–Sun in order.
+    """
+    if start_monday is None:
+        # Find this week's Monday from current date
+        today = datetime.now()
+        days_since_monday = today.weekday()  # 0=Mon, 6=Sun
+        start_monday = today - timedelta(days=days_since_monday)
+    # Generate messages for Monday (0) through Sunday (6)
+    return [get_weekday_message(i) for i in range(7)]
 
 def get_tomorrow_message() -> str:
     """Get the message for tomorrow.
@@ -369,6 +390,8 @@ def get_messages_statistics(messages: Optional[List[str]] = None) -> dict:
 VERSION = "1.0.0"
 
 def main():
+    from datetime import timedelta
+
     parser = argparse.ArgumentParser(description="Generate a daily message")
     parser.add_argument("-m", "--message", action="store_true", help="Show message of the day")
     parser.add_argument("-c", "--count", type=int, default=1, help="Number of messages to show")
@@ -397,6 +420,7 @@ def main():
     parser.add_argument("--today-weekday", action="store_true", help="Show today's weekday message (deterministic by current weekday)")
     parser.add_argument("--yesterday-weekday", action="store_true", help="Show yesterday's weekday message (based on yesterday's day of week)")
     parser.add_argument("--tomorrow-weekday", action="store_true", help="Show tomorrow's weekday message (based on tomorrow's day of week)")
+    parser.add_argument("--this-week", action="store_true", help="Show all 7 weekday messages for the current week (Mon–Sun)")
     parser.add_argument("-e", "--strip-emoji", action="store_true", help="Remove emojis from output")
     parser.add_argument("--emoji-count", action="store_true", help="Show total emoji count across output messages")
     parser.add_argument("--total", action="store_true", help="Show total number of messages and exit")
@@ -600,6 +624,12 @@ def main():
         except ValueError as e:
             print(f"Error: {e}", file=sys.stderr)
             sys.exit(1)
+    elif args.this_week:
+        # Get the current week's Monday
+        today = datetime.now()
+        days_since_monday = today.weekday()
+        week_monday = today - timedelta(days=days_since_monday)
+        messages = get_week_messages(start_monday=week_monday)
     elif args.random_sample is not None:
         try:
             messages = get_random_sample(args.random_sample, custom_messages)

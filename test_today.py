@@ -972,3 +972,74 @@ def test_cli_index_only_with_custom_messages_file():
     finally:
         if os.path.exists(temp_path):
             os.unlink(temp_path)
+
+# --- Tests for get_week_messages and --this-week ---
+
+def test_get_week_messages():
+    """get_week_messages should return 7 messages in Monday–Sunday order."""
+    from today import get_week_messages, MESSAGES
+    week_msgs = get_week_messages()
+    assert isinstance(week_msgs, list)
+    assert len(week_msgs) == 7
+    for msg in week_msgs:
+        assert msg in MESSAGES
+    # Deterministic: same week start should give same messages
+    week_msgs2 = get_week_messages()
+    assert week_msgs == week_msgs2
+
+def test_get_week_messages_with_explicit_monday():
+    """get_week_messages with a specific Monday date should work."""
+    from today import get_week_messages
+    from datetime import datetime
+    monday = datetime(2023, 5, 1)  # A Monday
+    week_msgs = get_week_messages(start_monday=monday)
+    assert len(week_msgs) == 7
+    # All should be valid messages
+    from today import MESSAGES
+    for msg in week_msgs:
+        assert msg in MESSAGES
+
+def test_cli_this_week_option():
+    """CLI should support --this-week to show all 7 weekday messages for current week."""
+    import subprocess
+    result = subprocess.run(["python", "today.py", "--this-week"], capture_output=True, text=True)
+    assert result.returncode == 0
+    lines = [line.strip() for line in result.stdout.split("\n") if line.strip()]
+    assert len(lines) == 7
+    from today import MESSAGES
+    for line in lines:
+        assert line in MESSAGES
+
+def test_cli_this_week_with_json():
+    """CLI --this-week with --json should output JSON array."""
+    import subprocess
+    import json
+    result = subprocess.run(["python", "today.py", "--this-week", "--json"], capture_output=True, text=True)
+    assert result.returncode == 0
+    data = json.loads(result.stdout)
+    assert "messages" in data
+    assert len(data["messages"]) == 7
+    from today import MESSAGES
+    for msg in data["messages"]:
+        assert msg in MESSAGES
+
+def test_cli_this_week_with_strip_emoji():
+    """CLI --this-week should work with --strip-emoji."""
+    import subprocess
+    result = subprocess.run(["python", "today.py", "--this-week", "--strip-emoji"], capture_output=True, text=True)
+    assert result.returncode == 0
+    lines = [line.strip() for line in result.stdout.split("\n") if line.strip()]
+    assert len(lines) == 7
+    # Should have no emojis
+    import re
+    emoji_pattern = re.compile("["
+                      "\U0001F600-\U0001F64F"
+                      "\U0001F300-\U0001F5FF"
+                      "\U0001F680-\U0001F6FF"
+                      "\U0001F1E0-\U0001F1FF"
+                      "\U00002702-\U000027B0"
+                      "\U0001F900-\U0001F9FF"
+                      "\U000024C2-\U0001F251]", re.UNICODE)
+    for line in lines:
+        assert not emoji_pattern.search(line)
+
