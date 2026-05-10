@@ -38,12 +38,12 @@ python today.py --emoji-count    # Show total emoji count in output messages
 ## Python API
 
 ```python
-from today import (get_daily_message, get_random_message, get_message_count,
+from today import (get_daily_message, get_random_message, get_random_sample, get_message_count,
                    get_message_by_index, get_shuffled_messages, get_date_seed,
                    get_weekday_message, get_tomorrow_message, get_yesterday_message,
                    get_next_n_messages, get_previous_n_messages, get_messages_between_dates,
                    get_message_index_for_date, search_messages, get_messages_statistics,
-                   strip_emoji, contains_emoji, load_messages_from_file, load_config)
+                   strip_emoji, contains_emoji, count_emojis, load_messages_from_file, load_config)
 
 # Get a daily message (deterministic by date)
 print(get_daily_message())
@@ -95,11 +95,17 @@ print(f"Total: {stats['total']}")
 print(f"Unique emojis: {len(stats['unique_emojis'])}")
 print(f"Total emoji count: {stats['total_emojis']}")
 
+# Get a random sample of N unique messages (without replacement)
+print(get_random_sample(5))
+
 # Strip emojis from messages
 print(strip_emoji("Today is great! 🌟"))
 
 # Check if a message contains emoji
 print(contains_emoji("Today is great! 🌟"))  # True
+
+# Count emojis in a message
+print(count_emojis("Today is great! 🌟"))  # 1
 
 # Load custom messages from file
 custom = load_messages_from_file("my_messages.txt")
