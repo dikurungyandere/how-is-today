@@ -9,3 +9,4 @@
 - 2026-05-05: Added get_message_index_for_date() and --index-only/-I; fixed multi-message count seeding; cleaned repo.
 - 2026-05-07: fix: --total --json now outputs valid JSON integer (was plain text); added test_cli_total_json_flag.
 - 2025-04: Ongoing: Added many utilities and CLI flags: get_random_message, -i/--index, -t/--tomorrow, --messages-file, config, --shuffle, --strip-emoji, --total, -y/--yesterday, get_weekday_message, --next/-n, --previous/-p, get_messages_between_dates, --show-date, contains_emoji, --from-date/--to-date, get_date_seed, --clear; plus extensive tests and README updates. Also fixed local Random usage and UTF-8 encoding.
+- 2026-05-10: feat: add --emoji-count flag; added count_emojis() utility to count emojis in output messages.
