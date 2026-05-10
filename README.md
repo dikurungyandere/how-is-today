@@ -32,6 +32,7 @@ python today.py --show-date -m   # Show today's message with date
 python today.py --search <query> # Search messages containing text or emoji
 python today.py --stats          # Show statistics about messages (count, lengths, emoji info)
 python today.py --total          # Show total number of messages
+python today.py --emoji-count    # Show total emoji count in output messages
 ```
 
 ## Python API

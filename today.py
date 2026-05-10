@@ -12,7 +12,7 @@ __all__ = ["get_daily_message", "get_random_message", "get_random_sample", "get_
            "get_weekday_message", "get_tomorrow_message", "get_yesterday_message",
            "get_next_n_messages", "get_previous_n_messages", "get_messages_between_dates",
            "get_message_index_for_date", "search_messages", "get_messages_statistics", "MESSAGES", "VERSION",
-           "strip_emoji", "contains_emoji", "load_messages_from_file", "load_config"]
+           "strip_emoji", "contains_emoji", "count_emojis", "load_messages_from_file", "load_config"]
 
 from datetime import datetime, timedelta
 from typing import Optional, List
@@ -314,6 +314,10 @@ def contains_emoji(text: str) -> bool:
     """Check if the text contains any emoji."""
     return bool(emoji_pattern.search(text))
 
+def count_emojis(text: str) -> int:
+    """Count the number of emoji characters in the given text."""
+    return len(emoji_pattern.findall(text))
+
 def get_messages_statistics(messages: Optional[List[str]] = None) -> dict:
     """Compute statistics for a list of messages.
 
@@ -394,6 +398,7 @@ def main():
     parser.add_argument("--yesterday-weekday", action="store_true", help="Show yesterday's weekday message (based on yesterday's day of week)")
     parser.add_argument("--tomorrow-weekday", action="store_true", help="Show tomorrow's weekday message (based on tomorrow's day of week)")
     parser.add_argument("-e", "--strip-emoji", action="store_true", help="Remove emojis from output")
+    parser.add_argument("--emoji-count", action="store_true", help="Show total emoji count across output messages")
     parser.add_argument("--total", action="store_true", help="Show total number of messages and exit")
     parser.add_argument("-C", "--clear", action="store_true", help="Clear the terminal before output")
     parser.add_argument("-n", "--next", type=int, help="Show messages for the next N days starting from the target date")
@@ -615,6 +620,10 @@ def main():
         else:
             messages = [get_daily_message(seed=custom_seed, date=target_date)]
 
+    total_emojis = None
+    if args.emoji_count:
+        total_emojis = sum(count_emojis(m) for m in messages)
+
     if args.output:
         with open(args.output, "w") as f:
             f.write("\n".join(messages))
@@ -630,6 +639,8 @@ def main():
         if custom_seed is not None:
             output["seed"] = custom_seed
         output["generated_at"] = datetime.now().isoformat()
+        if total_emojis is not None:
+            output["total_emojis"] = total_emojis
         print(json.dumps(output))
     else:
         if args.show_date:
@@ -658,6 +669,8 @@ def main():
             for msg in messages:
                 output_msg = strip_emoji(msg) if args.strip_emoji else msg
                 print(output_msg)
+        if args.emoji_count:
+            print(f"Total emojis: {total_emojis}")
 
     if args.verbose and not args.json:
         seed = custom_seed if custom_seed else (target_date.year * 10000 + target_date.month * 100 + target_date.day) if target_date else int(datetime.now().strftime("%Y%m%d"))
