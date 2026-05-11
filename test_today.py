@@ -999,6 +999,40 @@ def test_get_week_messages_with_explicit_monday():
     for msg in week_msgs:
         assert msg in MESSAGES
 
+def test_get_business_week_messages():
+    """get_business_week_messages should return 5 messages (Mon-Fri)."""
+    from today import get_business_week_messages, MESSAGES
+    business_msgs = get_business_week_messages()
+    assert isinstance(business_msgs, list)
+    assert len(business_msgs) == 5
+    for msg in business_msgs:
+        assert msg in MESSAGES
+    # Deterministic: same week start should give same messages
+    business_msgs2 = get_business_week_messages()
+    assert business_msgs == business_msgs2
+
+def test_get_business_week_messages_with_explicit_monday():
+    """get_business_week_messages with a specific Monday date should work."""
+    from today import get_business_week_messages
+    from datetime import datetime
+    monday = datetime(2023, 5, 1)  # A Monday
+    business_msgs = get_business_week_messages(start_monday=monday)
+    assert len(business_msgs) == 5
+    from today import MESSAGES
+    for msg in business_msgs:
+        assert msg in MESSAGES
+
+def test_cli_business_week_option():
+    """CLI should support --business-week to show 5 weekday messages for current week."""
+    import subprocess
+    result = subprocess.run(["python", "today.py", "--business-week"], capture_output=True, text=True)
+    assert result.returncode == 0
+    lines = [line.strip() for line in result.stdout.split("\n") if line.strip()]
+    assert len(lines) == 5
+    from today import MESSAGES
+    for line in lines:
+        assert line in MESSAGES
+
 def test_cli_this_week_option():
     """CLI should support --this-week to show all 7 weekday messages for current week."""
     import subprocess
