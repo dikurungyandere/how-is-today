@@ -1,4 +1,5 @@
 # Memory
+- 2026-05-11: test: add CLI test coverage for --emoji-count flag (text and JSON outputs).
 - 2026-05-10: feat: add --this-week flag and get_week_messages() to show all 7 weekday messages for current week (Mon–Sun); added 5 tests; updated README.
 - 2026-05-09: feat: add --yesterday-weekday and --tomorrow-weekday CLI flags; updated README.
 - 2026-05-09: feat: add --today-weekday flag to show message for current weekday; added test_cli_today_weekday_option.

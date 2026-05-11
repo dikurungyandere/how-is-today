@@ -1043,3 +1043,36 @@ def test_cli_this_week_with_strip_emoji():
     for line in lines:
         assert not emoji_pattern.search(line)
 
+def test_cli_emoji_count_option():
+    '''CLI --emoji-count should print total emoji count after messages.'''
+    import subprocess
+    from today import get_weekday_message, count_emojis
+    result = subprocess.run(['python', 'today.py', '--this-week', '--emoji-count'], capture_output=True, text=True)
+    assert result.returncode == 0
+    lines = [line.strip() for line in result.stdout.split('\\n') if line.strip()]
+    # Should have 7 messages + 1 total line
+    assert len(lines) == 8
+    assert lines[-1].startswith('Total emojis: ')
+    reported_total = int(lines[-1].split(':')[1].strip())
+    # Compute expected total from weekday messages
+    expected_total = sum(count_emojis(get_weekday_message(i)) for i in range(7))
+    assert reported_total == expected_total
+    # Also check that all first 7 lines are valid messages
+    from today import MESSAGES
+    for line in lines[:-1]:
+        assert line in MESSAGES
+
+def test_cli_emoji_count_json_option():
+    '''CLI --emoji-count with --json should include total_emojis field.'''
+    import subprocess
+    import json
+    from today import get_weekday_message, count_emojis
+    result = subprocess.run(['python', 'today.py', '--this-week', '--emoji-count', '--json'], capture_output=True, text=True)
+    assert result.returncode == 0
+    data = json.loads(result.stdout)
+    assert 'total_emojis' in data
+    expected_total = sum(count_emojis(get_weekday_message(i)) for i in range(7))
+    assert data['total_emojis'] == expected_total
+    assert len(data['messages']) == 7
+
+
