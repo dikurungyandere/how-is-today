@@ -13,3 +13,4 @@
 - 2025-04: Ongoing: Added many utilities and CLI flags: get_random_message, -i/--index, -t/--tomorrow, --messages-file, config, --shuffle, --strip-emoji, --total, -y/--yesterday, get_weekday_message, --next/-n, --previous/-p, get_messages_between_dates, --show-date, contains_emoji, --from-date/--to-date, get_date_seed, --clear; plus extensive tests and README updates. Also fixed local Random usage and UTF-8 encoding.
 - 2026-05-10: feat: add --emoji-count flag; added count_emojis() utility to count emojis in output messages.
 - 2026-05-10: doc: document get_random_sample() and count_emojis() in README Python API section; fixed duplicate example.
+- 2026-05-11: feat: add --business-week flag and get_business_week_messages() for Mon–Fri messages; added tests; updated README; fixed missing get_week_messages in API imports.
