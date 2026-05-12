@@ -1,4 +1,5 @@
 # Memory
+- 2026-05-12: doc: document --plain flag in README for --list output (one message per line without numbering).
 - 2026-05-12: test: add CLI test coverage for --plain flag (output messages without numbering).
 - 2026-05-11: test: add CLI test coverage for --emoji-count flag (text and JSON outputs).
 - 2026-05-10: feat: add --this-week flag and get_week_messages() to show all 7 weekday messages for current week (Mon–Sun); added 5 tests; updated README.
