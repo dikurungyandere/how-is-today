@@ -1,4 +1,5 @@
 # Memory
+- 2026-05-12: feat: add --seed-only flag to print the deterministic date-derived seed; updated README.
 - 2026-05-12: doc: document --plain flag in README for --list output (one message per line without numbering).
 - 2026-05-12: test: add CLI test coverage for --plain flag (output messages without numbering).
 - 2026-05-11: test: add CLI test coverage for --emoji-count flag (text and JSON outputs).
