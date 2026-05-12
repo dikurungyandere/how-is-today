@@ -19,6 +19,7 @@ python today.py --list --json       # Output all messages as JSON array
 python today.py -i 5               # Get message by index (0-based)
 python today.py -I                 # Get message index for today (numeric identifier)
 python today.py -I --date 2023-05-15  # Get index for specific date
+python today.py --seed-only  # Print the date-derived seed and exit
 python today.py -t                # Get message for tomorrow
 python today.py --yesterday-weekday   # Get yesterday's weekday message
 python today.py --tomorrow-weekday    # Get tomorrow's weekday message

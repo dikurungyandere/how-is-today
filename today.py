@@ -448,6 +448,7 @@ def main():
     parser.add_argument("--to-date", type=str, help="End date for range (YYYY-MM-DD), use with --from-date")
     parser.add_argument("-D", "--show-date", action="store_true", help="Prefix each message with its date (YYYY-MM-DD)")
     parser.add_argument("-I", "--index-only", action="store_true", help="Print only the message index (0-based) and exit")
+    parser.add_argument("--seed-only", action="store_true", help="Print only the deterministic seed for the date and exit")
     args = parser.parse_args()
     if args.clear:
         if os.name == 'nt':
@@ -580,6 +581,11 @@ def main():
     if args.index_only:
         idx = get_message_index_for_date(seed=custom_seed, date=target_date)
         print(idx)
+        return
+
+    if args.seed_only:
+        seed = custom_seed if custom_seed is not None else get_date_seed(target_date)
+        print(seed)
         return
 
     if args.next is not None:
