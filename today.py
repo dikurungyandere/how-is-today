@@ -9,7 +9,7 @@ Examples:
 
 __all__ = ["get_daily_message", "get_random_message", "get_random_sample", "get_message_count",
            "get_message_by_index", "get_shuffled_messages", "get_date_seed",
-           "get_weekday_message", "get_week_messages", "get_business_week_messages", "get_tomorrow_message", "get_yesterday_message",
+           "get_weekday_message", "get_week_messages", "get_next_week_messages", "get_business_week_messages", "get_tomorrow_message", "get_yesterday_message",
            "get_next_n_messages", "get_previous_n_messages", "get_messages_between_dates",
            "get_message_index_for_date", "search_messages", "get_messages_statistics", "MESSAGES", "VERSION",
            "strip_emoji", "contains_emoji", "count_emojis", "load_messages_from_file", "load_config"]
@@ -190,6 +190,18 @@ def get_week_messages(start_monday: Optional[datetime] = None) -> List[str]:
         start_monday = today - timedelta(days=days_since_monday)
     # Generate messages for Monday (0) through Sunday (6)
     return [get_weekday_message(i) for i in range(7)]
+
+def get_next_week_messages() -> List[str]:
+    """Get all 7 weekday messages for next week (Mon–Sun).
+
+    Returns:
+        List of 7 messages for the next calendar week, Monday through Sunday.
+    """
+    today = datetime.now()
+    days_since_monday = today.weekday()
+    # Next Monday is in (7 - days_since_monday) days
+    next_monday = today + timedelta(days=(7 - days_since_monday))
+    return get_week_messages(start_monday=next_monday)
 
 def get_business_week_messages(start_monday: Optional[datetime] = None) -> List[str]:
     """Get the 5 weekday messages (Mon–Fri) for the week containing the given Monday.
@@ -437,6 +449,7 @@ def main():
     parser.add_argument("--yesterday-weekday", action="store_true", help="Show yesterday's weekday message (based on yesterday's day of week)")
     parser.add_argument("--tomorrow-weekday", action="store_true", help="Show tomorrow's weekday message (based on tomorrow's day of week)")
     parser.add_argument("--this-week", action="store_true", help="Show all 7 weekday messages for the current week (Mon–Sun)")
+    parser.add_argument("--next-week", action="store_true", help="Show all 7 weekday messages for next week (Mon–Sun)")
     parser.add_argument("--last-week", action="store_true", help="Show all 7 weekday messages for last week (Mon–Sun)")
     parser.add_argument("--business-week", action="store_true", help="Show the 5 weekday messages for the current week (Mon–Fri)")
     parser.add_argument("-e", "--strip-emoji", action="store_true", help="Remove emojis from output")
@@ -654,6 +667,12 @@ def main():
         days_since_monday = today.weekday()
         week_monday = today - timedelta(days=days_since_monday)
         messages = get_week_messages(start_monday=week_monday)
+    elif args.next_week:
+        # Get next week's Monday
+        today = datetime.now()
+        days_since_monday = today.weekday()
+        next_week_monday = today + timedelta(days=(7 - days_since_monday))
+        messages = get_week_messages(start_monday=next_week_monday)
     elif args.last_week:
         # Get last week's Monday
         today = datetime.now()

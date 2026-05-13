@@ -1030,6 +1030,15 @@ def test_get_business_week_messages_with_explicit_monday():
     for msg in business_msgs:
         assert msg in MESSAGES
 
+def test_get_next_week_messages():
+    """get_next_week_messages should return 7 messages for next week."""
+    from today import get_next_week_messages, MESSAGES
+    next_msgs = get_next_week_messages()
+    assert isinstance(next_msgs, list)
+    assert len(next_msgs) == 7
+    for msg in next_msgs:
+        assert msg in MESSAGES
+
 def test_cli_business_week_option():
     """CLI should support --business-week to show 5 weekday messages for current week."""
     import subprocess
@@ -1037,6 +1046,17 @@ def test_cli_business_week_option():
     assert result.returncode == 0
     lines = [line.strip() for line in result.stdout.split("\n") if line.strip()]
     assert len(lines) == 5
+    from today import MESSAGES
+    for line in lines:
+        assert line in MESSAGES
+
+def test_cli_next_week_option():
+    """CLI should support --next-week to show all 7 weekday messages for next week."""
+    import subprocess
+    result = subprocess.run(["python", "today.py", "--next-week"], capture_output=True, text=True)
+    assert result.returncode == 0
+    lines = [line.strip() for line in result.stdout.split("\n") if line.strip()]
+    assert len(lines) == 7
     from today import MESSAGES
     for line in lines:
         assert line in MESSAGES

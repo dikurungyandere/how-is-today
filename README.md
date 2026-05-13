@@ -24,6 +24,7 @@ python today.py -t                # Get message for tomorrow
 python today.py --yesterday-weekday   # Get yesterday's weekday message
 python today.py --tomorrow-weekday    # Get tomorrow's weekday message
 python today.py --this-week           # Show all 7 weekday messages for the current week (Mon–Sun)
+python today.py --next-week            # Show all 7 weekday messages for next week (Mon–Sun)
 python today.py --last-week           # Show all 7 weekday messages for last week (Mon–Sun)
 python today.py --business-week        # Show the 5 weekday messages for the current week (Mon–Fri)
 python today.py --previous 3      # Get messages for the previous 3 days
@@ -45,7 +46,7 @@ python today.py --emoji-count    # Show total emoji count in output messages
 ```python
 from today import (get_daily_message, get_random_message, get_random_sample, get_message_count,
                    get_message_by_index, get_shuffled_messages, get_date_seed,
-                   get_weekday_message, get_week_messages, get_business_week_messages, get_tomorrow_message, get_yesterday_message,
+                   get_weekday_message, get_week_messages, get_next_week_messages, get_business_week_messages, get_tomorrow_message, get_yesterday_message,
                    get_next_n_messages, get_previous_n_messages, get_messages_between_dates,
                    get_message_index_for_date, search_messages, get_messages_statistics,
                    strip_emoji, contains_emoji, count_emojis, load_messages_from_file, load_config)
@@ -78,6 +79,9 @@ print(get_week_messages())  # Returns list of 7 messages
 # Or for a specific week starting on a given Monday date:
 from datetime import datetime
 print(get_week_messages(start_monday=datetime(2023, 5, 1)))
+
+# Get all 7 weekday messages for next week (Monday through Sunday)
+print(get_next_week_messages())
 
 # Get the 5 business days (Mon–Fri) for the current week
 print(get_business_week_messages())
