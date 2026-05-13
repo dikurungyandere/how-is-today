@@ -1072,6 +1072,19 @@ def test_cli_this_week_option():
     for line in lines:
         assert line in MESSAGES
 
+
+def test_cli_last_week_option():
+    """CLI should support --last-week to show all 7 weekday messages for last week."""
+    import subprocess
+    result = subprocess.run(["python", "today.py", "--last-week"], capture_output=True, text=True)
+    assert result.returncode == 0
+    lines = [line.strip() for line in result.stdout.split("\n") if line.strip()]
+    assert len(lines) == 7
+    from today import MESSAGES
+    for line in lines:
+        assert line in MESSAGES
+
+
 def test_cli_this_week_with_json():
     """CLI --this-week with --json should output JSON array."""
     import subprocess
@@ -1084,6 +1097,7 @@ def test_cli_this_week_with_json():
     from today import MESSAGES
     for msg in data["messages"]:
         assert msg in MESSAGES
+
 
 def test_cli_this_week_with_strip_emoji():
     """CLI --this-week should work with --strip-emoji."""
