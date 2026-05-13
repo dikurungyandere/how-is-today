@@ -437,6 +437,7 @@ def main():
     parser.add_argument("--yesterday-weekday", action="store_true", help="Show yesterday's weekday message (based on yesterday's day of week)")
     parser.add_argument("--tomorrow-weekday", action="store_true", help="Show tomorrow's weekday message (based on tomorrow's day of week)")
     parser.add_argument("--this-week", action="store_true", help="Show all 7 weekday messages for the current week (Mon–Sun)")
+    parser.add_argument("--last-week", action="store_true", help="Show all 7 weekday messages for last week (Mon–Sun)")
     parser.add_argument("--business-week", action="store_true", help="Show the 5 weekday messages for the current week (Mon–Fri)")
     parser.add_argument("-e", "--strip-emoji", action="store_true", help="Remove emojis from output")
     parser.add_argument("--emoji-count", action="store_true", help="Show total emoji count across output messages")
@@ -653,6 +654,12 @@ def main():
         days_since_monday = today.weekday()
         week_monday = today - timedelta(days=days_since_monday)
         messages = get_week_messages(start_monday=week_monday)
+    elif args.last_week:
+        # Get last week's Monday
+        today = datetime.now()
+        days_since_monday = today.weekday()
+        last_week_monday = today - timedelta(days=days_since_monday + 7)
+        messages = get_week_messages(start_monday=last_week_monday)
     elif args.business_week:
         # Get the current week's Monday
         today = datetime.now()

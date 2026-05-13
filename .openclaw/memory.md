@@ -1,4 +1,5 @@
 # Memory
+- 2026-05-13: feat: add --last-week CLI flag to show previous week's (Mon–Sun) deterministic messages; updated README.
 - 2026-05-12: feat: add --seed-only flag to print the deterministic date-derived seed; updated README.
 - 2026-05-12: doc: document --plain flag in README for --list output (one message per line without numbering).
 - 2026-05-12: test: add CLI test coverage for --plain flag (output messages without numbering).

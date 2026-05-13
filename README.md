@@ -24,6 +24,7 @@ python today.py -t                # Get message for tomorrow
 python today.py --yesterday-weekday   # Get yesterday's weekday message
 python today.py --tomorrow-weekday    # Get tomorrow's weekday message
 python today.py --this-week           # Show all 7 weekday messages for the current week (Mon–Sun)
+python today.py --last-week           # Show all 7 weekday messages for last week (Mon–Sun)
 python today.py --business-week        # Show the 5 weekday messages for the current week (Mon–Fri)
 python today.py --previous 3      # Get messages for the previous 3 days
 python today.py --next 7          # Get messages for the next 7 days
