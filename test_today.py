@@ -1173,3 +1173,25 @@ def test_cli_emoji_count_json_option():
     assert len(data['messages']) == 7
 
 
+
+def test_parse_date_string_valid():
+    """parse_date_string should parse valid YYYY-MM-DD strings."""
+    from today import parse_date_string
+    from datetime import datetime
+    result = parse_date_string("2023-05-15")
+    assert isinstance(result, datetime)
+    assert result.year == 2023
+    assert result.month == 5
+    assert result.day == 15
+
+def test_parse_date_string_invalid_format():
+    """parse_date_string should raise ValueError for invalid formats."""
+    from today import parse_date_string
+    import pytest
+    with pytest.raises(ValueError) as excinfo:
+        parse_date_string("05/15/2023")
+    assert "Invalid date format" in str(excinfo.value)
+    with pytest.raises(ValueError):
+        parse_date_string("2023-13-40")
+    with pytest.raises(ValueError):
+        parse_date_string("not-a-date")

@@ -12,7 +12,7 @@ __all__ = ["get_daily_message", "get_random_message", "get_random_sample", "get_
            "get_weekday_message", "get_week_messages", "get_next_week_messages", "get_business_week_messages", "get_tomorrow_message", "get_yesterday_message",
            "get_next_n_messages", "get_previous_n_messages", "get_messages_between_dates",
            "get_message_index_for_date", "search_messages", "get_messages_statistics", "MESSAGES", "VERSION",
-           "strip_emoji", "contains_emoji", "count_emojis", "load_messages_from_file", "load_config"]
+           "strip_emoji", "contains_emoji", "count_emojis", "load_messages_from_file", "load_config", "parse_date_string"]
 
 from datetime import datetime, timedelta
 from typing import Optional, List
@@ -44,6 +44,23 @@ MESSAGES: List[str] = [
     "Progress, not perfection! 📈",
     "You got this! 🤝",
 ]
+
+def parse_date_string(date_str: str) -> datetime:
+    """Parse a YYYY-MM-DD date string into a datetime object.
+
+    Args:
+        date_str: Date string in YYYY-MM-DD format.
+
+    Returns:
+        datetime: Parsed datetime.
+
+    Raises:
+        ValueError: If the format is invalid.
+    """
+    try:
+        return datetime.strptime(date_str, "%Y-%m-%d")
+    except ValueError:
+        raise ValueError(f"Invalid date format '{date_str}'. Use YYYY-MM-DD") from None
 
 def get_message_count() -> int:
     """Return the total number of available messages."""
@@ -550,9 +567,9 @@ def main():
         target_date = datetime.now() - timedelta(days=1)
     elif args.date:
         try:
-            target_date = datetime.strptime(args.date, "%Y-%m-%d")
-        except ValueError:
-            print(f"Error: Invalid date format '{args.date}'. Use YYYY-MM-DD", file=sys.stderr)
+            target_date = parse_date_string(args.date)
+        except ValueError as e:
+            print(f"Error: {e}", file=sys.stderr)
             sys.exit(1)
 
     custom_seed = args.seed if args.seed else None
@@ -620,8 +637,8 @@ def main():
             messages.append(get_daily_message(seed=custom_seed, date=day))
     elif args.from_date and args.to_date:
         try:
-            start_date = datetime.strptime(args.from_date, "%Y-%m-%d")
-            end_date = datetime.strptime(args.to_date, "%Y-%m-%d")
+            start_date = parse_date_string(args.from_date)
+            end_date = parse_date_string(args.to_date)
         except ValueError:
             print("Error: Invalid date format for --from-date/--to-date. Use YYYY-MM-DD", file=sys.stderr)
             sys.exit(1)

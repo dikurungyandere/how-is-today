@@ -49,7 +49,7 @@ from today import (get_daily_message, get_random_message, get_random_sample, get
                    get_weekday_message, get_week_messages, get_next_week_messages, get_business_week_messages, get_tomorrow_message, get_yesterday_message,
                    get_next_n_messages, get_previous_n_messages, get_messages_between_dates,
                    get_message_index_for_date, search_messages, get_messages_statistics,
-                   strip_emoji, contains_emoji, count_emojis, load_messages_from_file, load_config)
+                   strip_emoji, contains_emoji, count_emojis, load_messages_from_file, load_config, parse_date_string)
 
 # Get a daily message (deterministic by date)
 print(get_daily_message())
@@ -126,6 +126,9 @@ print(contains_emoji("Today is great! 🌟"))  # True
 
 # Count emojis in a message
 print(count_emojis("Today is great! 🌟"))  # 1
+
+# Parse a date string
+parse_date_string("2023-05-15")  # Returns datetime(2023, 5, 15)
 
 # Load custom messages from file
 custom = load_messages_from_file("my_messages.txt")
