@@ -1,4 +1,5 @@
 # Memory
+- 2026-05-14: feat: add parse_date_string() utility to centralize date parsing; replaced duplicate datetime.strptime in CLI; added tests and README docs.
 - 2026-05-14: test: add direct unit test for count_emojis utility (was only indirectly tested).
 - 2026-05-13: test: add CLI test coverage for --last-week flag (previously untested).
 - 2026-05-13: feat: add --next-week flag and get_next_week_messages() API for next week's Mon–Sun messages; updated README; added tests.
