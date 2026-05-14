@@ -1,24 +1,21 @@
 # Memory
-- 2026-05-14: feat: add parse_date_string() utility to centralize date parsing; replaced duplicate datetime.strptime in CLI; added tests and README docs.
-- 2026-05-14: test: add direct unit test for count_emojis utility (was only indirectly tested).
-- 2026-05-13: test: add CLI test coverage for --last-week flag (previously untested).
-- 2026-05-13: feat: add --next-week flag and get_next_week_messages() API for next week's Mon–Sun messages; updated README; added tests.
-- 2026-05-13: feat: add --last-week CLI flag to show previous week's (Mon–Sun) deterministic messages; updated README.
-- 2026-05-12: feat: add --seed-only flag to print the deterministic date-derived seed; updated README.
-- 2026-05-12: doc: document --plain flag in README for --list output (one message per line without numbering).
-- 2026-05-12: test: add CLI test coverage for --plain flag (output messages without numbering).
-- 2026-05-11: test: add CLI test coverage for --emoji-count flag (text and JSON outputs).
-- 2026-05-10: feat: add --this-week flag and get_week_messages() to show all 7 weekday messages for current week (Mon–Sun); added 5 tests; updated README.
-- 2026-05-09: feat: add --yesterday-weekday and --tomorrow-weekday CLI flags; updated README.
-- 2026-05-09: feat: add --today-weekday flag to show message for current weekday; added test_cli_today_weekday_option.
-- 2026-05-07: feat: add --first flag to get the first message (index 0); added test_cli_first_option.
-- 2026-05-08: feat: add --last flag to get the last message (complement to --first); added test_cli_last_option.
-- 2026-05-07: feat: add get_messages_statistics() utility and --stats CLI flag for message analysis (total, average lengths, emoji counts, unique emojis); added 8 tests; updated README.
-- 2026-05-07: feat: add search_messages() API and --search CLI flag to filter messages by text/emoji substring; added 8 tests; updated README.
-- 2026-05-06: Added --random-sample/-R, get_random_sample() API; fixed emoji regex for U+1F900–U+1F9FF; added pyproject.toml.
-- 2026-05-05: Added get_message_index_for_date() and --index-only/-I; fixed multi-message count seeding; cleaned repo.
-- 2026-05-07: fix: --total --json now outputs valid JSON integer (was plain text); added test_cli_total_json_flag.
-- 2025-04: Ongoing: Added many utilities and CLI flags: get_random_message, -i/--index, -t/--tomorrow, --messages-file, config, --shuffle, --strip-emoji, --total, -y/--yesterday, get_weekday_message, --next/-n, --previous/-p, get_messages_between_dates, --show-date, contains_emoji, --from-date/--to-date, get_date_seed, --clear; plus extensive tests and README updates. Also fixed local Random usage and UTF-8 encoding.
-- 2026-05-10: feat: add --emoji-count flag; added count_emojis() utility to count emojis in output messages.
-- 2026-05-10: doc: document get_random_sample() and count_emojis() in README Python API section; fixed duplicate example.
-- 2026-05-11: feat: add --business-week flag and get_business_week_messages() for Mon–Fri messages; added tests; updated README; fixed missing get_week_messages in API imports.
+- 2026-05-14: feat: add --list-emojis CLI flag to list all unique emojis from messages; supports --verbose (with counts), --json, -f (custom messages), -o (output); added 7 tests; updated README.
+- 2026-05-14: feat: add parse_date_string utility to centralize YYYY-MM-DD parsing
+- 2026-05-14: test: add direct unit test for count_emojis utility
+- 2026-05-13: test: add CLI test coverage for --last-week flag
+- 2026-05-13: feat: add --next-week flag and get_next_week_messages() API
+- 2026-05-13: feat: add --last-week CLI flag for previous week messages
+- 2026-05-12: feat: add --seed-only flag to print deterministic seed
+- 2026-05-12: doc: document --plain flag in README
+- 2026-05-12: test: add CLI test coverage for --plain flag
+- 2026-05-11: test: add CLI test coverage for --emoji-count flag
+- 2026-05-10: feat: add --this-week flag and get_week_messages() for current week
+- 2026-05-09: feat: add --yesterday-weekday and --tomorrow-weekday flags
+- 2026-05-09: feat: add --today-weekday flag for current weekday message
+- 2026-05-07: feat: add --first flag (index 0) and --last flag
+- 2026-05-07: feat: add get_messages_statistics() and --stats flag
+- 2026-05-07: feat: add search_messages() API and --search flag
+- 2026-05-06: feat: add --random-sample/-R and get_random_sample()
+- 2026-05-05: feat: add get_message_index_for_date() and --index-only/-I
+- 2026-05-07: fix: --total --json now outputs valid JSON integer
+- 2025-04: Ongoing: Added many utilities, CLI flags, extensive tests, and README updates
