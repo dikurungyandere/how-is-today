@@ -1172,6 +1172,121 @@ def test_cli_emoji_count_json_option():
     assert data['total_emojis'] == expected_total
     assert len(data['messages']) == 7
 
+# --- Tests for --list-emojis flag ---
+
+def test_cli_list_emojis():
+    """CLI --list-emojis should output all unique emojis."""
+    import subprocess
+    from today import get_messages_statistics, MESSAGES
+    result = subprocess.run(['python', 'today.py', '--list-emojis'], capture_output=True, text=True)
+    assert result.returncode == 0
+    output = result.stdout.strip()
+    stats = get_messages_statistics()
+    # Output should contain all unique emojis
+    for emoji in stats['unique_emojis']:
+        assert emoji in output
+    # Should be space-separated on one line (default non-verbose)
+    assert len(output.split()) == len(stats['unique_emojis'])
+
+def test_cli_list_emojis_verbose():
+    """CLI --list-emojis --verbose should show emoji counts."""
+    import subprocess
+    from today import get_messages_statistics
+    result = subprocess.run(['python', 'today.py', '--list-emojis', '--verbose'], capture_output=True, text=True)
+    assert result.returncode == 0
+    output = result.stdout.strip()
+    stats = get_messages_statistics()
+    lines = output.split('\n')
+    assert len(lines) == len(stats['unique_emojis'])
+    # Each line should be "emoji: count"
+    for line in lines:
+        assert ': ' in line
+        emoji, count_str = line.split(': ', 1)
+        assert emoji in stats['emoji_counts']
+        assert int(count_str) == stats['emoji_counts'][emoji]
+
+def test_cli_list_emojis_json():
+    """CLI --list-emojis --json should output JSON array."""
+    import subprocess
+    import json
+    from today import get_messages_statistics
+    result = subprocess.run(['python', 'today.py', '--list-emojis', '--json'], capture_output=True, text=True)
+    assert result.returncode == 0
+    emoji_list = json.loads(result.stdout)
+    stats = get_messages_statistics()
+    assert isinstance(emoji_list, list)
+    assert set(emoji_list) == set(stats['unique_emojis'])
+
+def test_cli_list_emojis_with_custom_messages():
+    """CLI --list-emojis should work with custom messages file."""
+    import subprocess
+    import tempfile
+    import os
+    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.txt') as f:
+        temp_path = f.name
+        f.write('Custom message with emoji 😀\n')
+        f.write('Another with emoji 😎\n')
+        f.write('No emoji here\n')
+        f.write('Also emoji 😀 again\n')
+    try:
+        result = subprocess.run(['python', 'today.py', '-f', temp_path, '--list-emojis'], capture_output=True, text=True)
+        assert result.returncode == 0
+        output = result.stdout.strip()
+        # Should contain 😀 and 😎
+        assert '😀' in output
+        assert '😎' in output
+        # With verbose, should show counts
+        result_v = subprocess.run(['python', 'today.py', '-f', temp_path, '--list-emojis', '--verbose'], capture_output=True, text=True)
+        assert result_v.returncode == 0
+        lines = result_v.stdout.strip().split('\n')
+        assert len(lines) == 2  # Two unique emojis
+        emoji_count_map = {line.split(': ')[0]: int(line.split(': ')[1]) for line in lines}
+        assert emoji_count_map['😀'] == 2
+        assert emoji_count_map['😎'] == 1
+    finally:
+        if os.path.exists(temp_path):
+            os.unlink(temp_path)
+
+def test_cli_list_emojis_empty():
+    """CLI --list-emojis with no emojis should output nothing (empty line)."""
+    import subprocess
+    import tempfile
+    import os
+    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.txt') as f:
+        temp_path = f.name
+        f.write('No emoji at all\n')
+        f.write('Plain text only\n')
+    try:
+        result = subprocess.run(['python', 'today.py', '-f', temp_path, '--list-emojis'], capture_output=True, text=True)
+        assert result.returncode == 0
+        output = result.stdout.strip()
+        assert output == ''
+    finally:
+        if os.path.exists(temp_path):
+            os.unlink(temp_path)
+
+def test_cli_list_emojis_with_output():
+    """CLI --list-emojis should support -o/--output."""
+    import subprocess
+    import tempfile
+    import os
+    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.txt') as f:
+        temp_path = f.name
+    try:
+        result = subprocess.run(['python', 'today.py', '--list-emojis', '-o', temp_path], capture_output=True, text=True)
+        assert result.returncode == 0
+        with open(temp_path, 'r') as f:
+            content = f.read().strip()
+        from today import get_messages_statistics
+        stats = get_messages_statistics()
+        # Content should be space-separated emojis
+        emojis_in_file = content.split()
+        assert len(emojis_in_file) == len(stats['unique_emojis'])
+    finally:
+        if os.path.exists(temp_path):
+            os.unlink(temp_path)
+
+
 
 
 def test_parse_date_string_valid():

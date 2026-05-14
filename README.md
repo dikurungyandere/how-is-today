@@ -39,6 +39,8 @@ python today.py --search <query> # Search messages containing text or emoji
 python today.py --stats          # Show statistics about messages (count, lengths, emoji info)
 python today.py --total          # Show total number of messages
 python today.py --emoji-count    # Show total emoji count in output messages
+python today.py --list-emojis    # List all unique emojis used in messages
+python today.py --list-emojis --verbose  # Show emoji counts too
 ```
 
 ## Python API

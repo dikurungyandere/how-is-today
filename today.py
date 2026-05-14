@@ -471,6 +471,7 @@ def main():
     parser.add_argument("--business-week", action="store_true", help="Show the 5 weekday messages for the current week (Mon–Fri)")
     parser.add_argument("-e", "--strip-emoji", action="store_true", help="Remove emojis from output")
     parser.add_argument("--emoji-count", action="store_true", help="Show total emoji count across output messages")
+    parser.add_argument("--list-emojis", action="store_true", help="List all unique emojis used in messages")
     parser.add_argument("--total", action="store_true", help="Show total number of messages and exit")
     parser.add_argument("-C", "--clear", action="store_true", help="Clear the terminal before output")
     parser.add_argument("-n", "--next", type=int, help="Show messages for the next N days starting from the target date")
@@ -541,6 +542,34 @@ def main():
                     print("Emoji counts:")
                     for emoji, count in sorted(stats['emoji_counts'].items(), key=lambda x: (-x[1], x[0])):
                         print(f"  {emoji}: {count}")
+        return
+
+    if args.list_emojis:
+        stats = get_messages_statistics(active_messages)
+        if args.output:
+            if args.json:
+                output_str = json.dumps(stats['unique_emojis'], indent=2)
+            else:
+                if args.verbose:
+                    # Show emoji with counts
+                    lines = [f"{emoji}: {stats['emoji_counts'][emoji]}" for emoji in sorted(stats['unique_emojis'])]
+                    output_str = "\n".join(lines)
+                else:
+                    # Just list emojis
+                    output_str = " ".join(stats['unique_emojis'])
+            with open(args.output, "w") as f:
+                f.write(output_str)
+            if not args.quiet:
+                print(f"Saved to {args.output}", file=sys.stderr)
+        elif not args.quiet:
+            if args.json:
+                print(json.dumps(stats['unique_emojis'], indent=2))
+            else:
+                if args.verbose:
+                    for emoji in sorted(stats['unique_emojis']):
+                        print(f"{emoji}: {stats['emoji_counts'][emoji]}")
+                else:
+                    print(" ".join(stats['unique_emojis']))
         return
 
     if args.list:
