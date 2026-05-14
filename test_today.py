@@ -199,6 +199,27 @@ def test_contains_emoji():
     for msg in MESSAGES:
         assert contains_emoji(msg)
 
+def test_count_emojis():
+    """count_emojis should return correct number of emoji characters."""
+    from today import count_emojis
+    # Empty string
+    assert count_emojis("") == 0
+    # No emoji
+    assert count_emojis("Hello world") == 0
+    assert count_emojis("12345") == 0
+    # Single emoji
+    assert count_emojis("🌟") == 1
+    assert count_emojis("💪") == 1
+    # Multiple emojis
+    assert count_emojis("🌟 💪 ✨") == 3
+    assert count_emojis("🚀🎯") == 2
+    # Mixed text and emojis
+    assert count_emojis("Today is great! 🌟") == 1
+    assert count_emojis("Multiple 🌈 and ☀️") == 2
+    # All MESSAGES contain at least one emoji
+    for msg in MESSAGES:
+        assert count_emojis(msg) >= 1
+
 def test_cli_output_flag():
     """CLI should support -o/--output to write message to file."""
     import subprocess
