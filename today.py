@@ -459,7 +459,8 @@ def main():
     parser.add_argument("--config", type=str, help="Path to config file (JSON)")
     parser.add_argument("-S", "--shuffle", action="store_true", help="Shuffle messages deterministically")
     parser.add_argument("-R", "--random-sample", type=int, metavar="N", help="Get N unique random messages (without replacement)")
-    parser.add_argument("--search", type=str, metavar="QUERY", help="Search messages containing text or emoji (case-insensitive substring match)")
+    parser.add_argument("--search", type=str, metavar="QUERY", help="Search messages containing text or emoji (case-insensitive by default)")
+    parser.add_argument("--case-sensitive", action="store_true", help="Make --search case-sensitive")
     parser.add_argument("--stats", action="store_true", help="Show statistics about the messages (count, lengths, emoji info)")
     parser.add_argument("-w", "--weekday", type=int, help="Get message for a given weekday (0=Monday, 6=Sunday)")
     parser.add_argument("--today-weekday", action="store_true", help="Show today's weekday message (deterministic by current weekday)")
@@ -738,7 +739,7 @@ def main():
             print(f"Error: {e}", file=sys.stderr)
             sys.exit(1)
     elif args.search is not None:
-        messages = search_messages(args.search, custom_messages)
+        messages = search_messages(args.search, custom_messages, args.case_sensitive)
         if not messages:
             print(f"No messages found matching '{args.search}'", file=sys.stderr)
             sys.exit(1)

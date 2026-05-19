@@ -1310,3 +1310,18 @@ def test_parse_date_string_invalid_format():
         parse_date_string("2023-13-40")
     with pytest.raises(ValueError):
         parse_date_string("not-a-date")
+
+def test_cli_search_case_sensitive_flag():
+    """CLI --search --case-sensitive should match exact case."""
+    import subprocess
+    result = subprocess.run(["python", "today.py", "--search", "Today", "--case-sensitive"], capture_output=True, text=True)
+    assert result.returncode == 0
+    lines = [line.strip() for line in result.stdout.split("\n") if line.strip()]
+    for line in lines:
+        assert "Today" in line  # exact case required
+    # Without --case-sensitive, lowercase should also match
+    result_insensitive = subprocess.run(["python", "today.py", "--search", "great"], capture_output=True, text=True)
+    assert result_insensitive.returncode == 0
+    # Case-sensitive with lowercase query should return no results for "Great"
+    result_lower = subprocess.run(["python", "today.py", "--search", "great", "--case-sensitive"], capture_output=True, text=True)
+    assert result_lower.returncode != 0 or "Great" not in result_lower.stdout
