@@ -1,21 +1,4 @@
-# Memory
-- 2026-05-14: feat: add --list-emojis CLI flag to list all unique emojis from messages; supports --verbose (with counts), --json, -f (custom messages), -o (output); added 7 tests; updated README.
-- 2026-05-14: feat: add parse_date_string utility to centralize YYYY-MM-DD parsing
-- 2026-05-14: test: add direct unit test for count_emojis utility
-- 2026-05-13: test: add CLI test coverage for --last-week flag
-- 2026-05-13: feat: add --next-week flag and get_next_week_messages() API
-- 2026-05-13: feat: add --last-week CLI flag for previous week messages
-- 2026-05-12: feat: add --seed-only flag to print deterministic seed
-- 2026-05-12: doc: document --plain flag in README
-- 2026-05-12: test: add CLI test coverage for --plain flag
-- 2026-05-11: test: add CLI test coverage for --emoji-count flag
-- 2026-05-10: feat: add --this-week flag and get_week_messages() for current week
-- 2026-05-09: feat: add --yesterday-weekday and --tomorrow-weekday flags
-- 2026-05-09: feat: add --today-weekday flag for current weekday message
-- 2026-05-07: feat: add --first flag (index 0) and --last flag
-- 2026-05-07: feat: add get_messages_statistics() and --stats flag
-- 2026-05-07: feat: add search_messages() API and --search flag
-- 2026-05-06: feat: add --random-sample/-R and get_random_sample()
-- 2026-05-05: feat: add get_message_index_for_date() and --index-only/-I
-- 2026-05-07: fix: --total --json now outputs valid JSON integer
-- 2025-04: Ongoing: Added many utilities, CLI flags, extensive tests, and README updates
+# Development Log - how-is-today
+
+## 2025-05-19
+Added `--case-sensitive` CLI flag for `--search` option. The Python API already supported `case_sensitive` parameter in `search_messages()`, but the CLI was missing this feature. Updated search call to use `args.case_sensitive` and added CLI test for the new flag.
