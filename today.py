@@ -8,7 +8,7 @@ Examples:
 """
 
 __all__ = ["get_daily_message", "get_random_message", "get_random_sample", "get_message_count",
-           "get_message_by_index", "get_shuffled_messages", "get_date_seed",
+           "get_all_messages", "get_message_by_index", "get_shuffled_messages", "get_date_seed",
            "get_weekday_message", "get_week_messages", "get_next_week_messages", "get_business_week_messages", "get_tomorrow_message", "get_yesterday_message",
            "get_next_n_messages", "get_previous_n_messages", "get_messages_between_dates",
            "get_message_index_for_date", "search_messages", "get_messages_statistics", "MESSAGES", "VERSION",
@@ -62,9 +62,19 @@ def parse_date_string(date_str: str) -> datetime:
     except ValueError:
         raise ValueError(f"Invalid date format '{date_str}'. Use YYYY-MM-DD") from None
 
+def get_all_messages() -> List[str]:
+    """Return a copy of all available messages.
+
+    Returns:
+        List of all message strings.
+    """
+    return MESSAGES.copy()
+
+
 def get_message_count() -> int:
     """Return the total number of available messages."""
     return len(MESSAGES)
+
 
 def get_message_by_index(index: int, messages: Optional[List[str]] = None) -> Optional[str]:
     """Return message at given index, or None if out of range."""

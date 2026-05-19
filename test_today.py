@@ -1357,3 +1357,14 @@ def test_cli_stats_output_flag():
     finally:
         if os.path.exists(temp_path):
             os.unlink(temp_path)
+
+
+def test_get_all_messages():
+    """get_all_messages should return a copy of all messages."""
+    from today import get_all_messages
+    result = get_all_messages()
+    assert isinstance(result, list)
+    assert len(result) == len(MESSAGES)
+    assert result == MESSAGES
+    # Should return a copy, not the original
+    assert result is not MESSAGES

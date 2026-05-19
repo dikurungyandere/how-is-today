@@ -48,6 +48,7 @@ python today.py --list-emojis --verbose  # Show emoji counts too
 
 ```python
 from today import (get_daily_message, get_random_message, get_random_sample, get_message_count,
+                   get_all_messages,
                    get_message_by_index, get_shuffled_messages, get_date_seed,
                    get_weekday_message, get_week_messages, get_next_week_messages, get_business_week_messages, get_tomorrow_message, get_yesterday_message,
                    get_next_n_messages, get_previous_n_messages, get_messages_between_dates,
@@ -129,6 +130,9 @@ print(contains_emoji("Today is great! 🌟"))  # True
 
 # Count emojis in a message
 print(count_emojis("Today is great! 🌟"))  # 1
+
+# Get all messages as a list
+print(get_all_messages())  # ["Today is a great day! 🌟", ...]
 
 # Parse a date string
 parse_date_string("2023-05-15")  # Returns datetime(2023, 5, 15)
