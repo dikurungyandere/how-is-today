@@ -1325,3 +1325,35 @@ def test_cli_search_case_sensitive_flag():
     # Case-sensitive with lowercase query should return no results for "Great"
     result_lower = subprocess.run(["python", "today.py", "--search", "great", "--case-sensitive"], capture_output=True, text=True)
     assert result_lower.returncode != 0 or "Great" not in result_lower.stdout
+
+def test_cli_stats_output_flag():
+    """CLI --stats should support -o/--output to write stats to file."""
+    import subprocess
+    import tempfile
+    import json
+    import os
+    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.txt') as f:
+        temp_path = f.name
+    try:
+        # Test without --quiet: should write to file and print confirmation
+        result = subprocess.run(["python", "today.py", "--stats", "-o", temp_path], capture_output=True, text=True)
+        assert result.returncode == 0
+        assert f"Saved to {temp_path}" in result.stderr
+        with open(temp_path, 'r') as f:
+            content = f.read()
+        assert "Total messages:" in content
+        # Test with --quiet: should write to file silently
+        result2 = subprocess.run(["python", "today.py", "--stats", "-o", temp_path, "-q"], capture_output=True, text=True)
+        assert result2.returncode == 0
+        assert result2.stdout == ""
+        assert result2.stderr == ""
+        # Test with --json flag
+        result3 = subprocess.run(["python", "today.py", "--stats", "-o", temp_path, "--json"], capture_output=True, text=True)
+        assert result3.returncode == 0
+        with open(temp_path, 'r') as f:
+            data = json.loads(f.read())
+        assert "total" in data
+        assert "unique_emojis" in data
+    finally:
+        if os.path.exists(temp_path):
+            os.unlink(temp_path)
