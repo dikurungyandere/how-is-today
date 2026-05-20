@@ -1368,3 +1368,18 @@ def test_get_all_messages():
     assert result == MESSAGES
     # Should return a copy, not the original
     assert result is not MESSAGES
+
+def test_cli_emoji_count_with_date_range():
+    """CLI --emoji-count should work with --from-date/--to-date."""
+    import subprocess
+    import json
+    from today import get_messages_between_dates, count_emojis
+    from datetime import datetime
+    result = subprocess.run(['python', 'today.py', '--from-date', '2023-01-01', '--to-date', '2023-01-05', '--emoji-count', '--json'], capture_output=True, text=True)
+    assert result.returncode == 0
+    data = json.loads(result.stdout)
+    assert 'total_emojis' in data
+    # Verify the count matches the messages
+    msgs = get_messages_between_dates(datetime(2023, 1, 1), datetime(2023, 1, 5))
+    expected = sum(count_emojis(m) for m in msgs)
+    assert data['total_emojis'] == expected
