@@ -842,6 +842,31 @@ def test_cli_index_only_with_seed():
 def test_cli_date_option_invalid():
     """CLI --date should reject invalid date formats."""
     import subprocess
+
+def test_cli_seed_only_flag():
+    """CLI should support --seed-only to print just the deterministic seed."""
+    import subprocess
+    result = subprocess.run(["python", "today.py", "--seed-only"], capture_output=True, text=True)
+    assert result.returncode == 0
+    output = result.stdout.strip()
+    assert output.isdigit()
+
+def test_cli_seed_only_with_date():
+    """--seed-only with --date should print seed for that date (YYYYMMDD format)."""
+    import subprocess
+    result = subprocess.run(["python", "today.py", "--seed-only", "--date", "2023-05-15"], capture_output=True, text=True)
+    assert result.returncode == 0
+    assert result.stdout.strip() == "20230515"
+    # Deterministic: same date gives same seed
+    result2 = subprocess.run(["python", "today.py", "--seed-only", "--date", "2023-05-15"], capture_output=True, text=True)
+    assert result2.stdout.strip() == "20230515"
+
+def test_cli_seed_only_with_seed():
+    """--seed-only with --seed should print the explicit seed value."""
+    import subprocess
+    result = subprocess.run(["python", "today.py", "--seed-only", "--seed", "42"], capture_output=True, text=True)
+    assert result.returncode == 0
+    assert result.stdout.strip() == "42"
     result = subprocess.run(["python", "today.py", "--date", "2023/01/01"], capture_output=True, text=True)
     assert result.returncode != 0
     assert "Invalid date format" in result.stderr
